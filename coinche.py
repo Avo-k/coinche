@@ -1,8 +1,8 @@
 import random
 from tqdm import trange
 from itertools import cycle
-from utils import Card, Deck, Bid
-from players import RandomPlayer, BaselinePlayer, HumanPlayer, Player
+from utils import Deck, Bid
+from players import RandomPlayer, BaselinePlayer, HumanPlayer
 
 
 class CoincheGame:
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     games_won = [0, 0]
     teams = ["Ivan Eloi", "Jean Jules"]
 
-    sample = 10000
+    sample = 1000
     for i in range(sample):
         players = [
             RandomPlayer(),
