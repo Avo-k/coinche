@@ -18,7 +18,8 @@ class RandomPlayer(Player):
         else:  # 50% chance to pass
             return Bid()
 
-    def play(self, passed_tricks, current_trick):
+    def play(self, game_state):
+        passed_tricks, current_trick = game_state.tricks, game_state.current_trick
         legal_cards = self.get_legal_cards(current_trick)
         chosen_card = random.choice(legal_cards)
         self.hand.remove(chosen_card)
@@ -29,7 +30,8 @@ class HumanPlayer(Player):
     def __init__(self):
         super().__init__()
 
-    def play(self, passed_tricks, current_trick):
+    def play(self, game_state):
+        passed_tricks, current_trick = game_state.tricks, game_state.current_trick
         legal_cards = self.get_legal_cards(current_trick)
         chosen_card = None
 
@@ -132,7 +134,8 @@ class BaselinePlayer(Player):
         else:
             return min(legal_cards, key=lambda x: x.value)
 
-    def play(self, passed_tricks, current_trick):
+    def play(self, game_state):
+        passed_tricks, current_trick = game_state.tricks, game_state.current_trick
         chosen_card = self.choose_best_card(passed_tricks, current_trick)
         self.hand.remove(chosen_card)
         return chosen_card

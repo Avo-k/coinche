@@ -9,9 +9,9 @@ Games can be classified according to the following properties:
 - **Sequential**: Whether actions are applied by players sequentially or simultaneously.
 - **Discrete**: Whether actions are discrete or applied in real-time.
 
-for now I only have solved 2-player, zero-sum, perfect-information, determinist, sequential and discrete games. Like Chess, or utilimate tic-tac-toe. Now is the time to tackle partially observable games, starting with the belote-coinchée because I love this game.
+For now I only tackled 2-player, zero-sum, perfect-information, determinist, sequential, discrete games. Like Chess, or utilimate tic-tac-toe. MCTS or Minimax algorithms were enough to make super-human bots for those games, by partially exploring the colossal future game tree.
 
-When MCTS or Minimax algorithms were enough for those games ; exploring the future game tree. Now another dimension is to be considered, and lots of different game tree are possible from a single player perspective. 
+Now is the time to tackle *partially observable* games, starting with the belote-coinchée because I love this game. A whole other dimension is to be considered, and lots of different future game trees are possible from a single player perspective. 
 
 We then have to consider what information do we have, to determine which future game trees we should explore.
 

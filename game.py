@@ -15,6 +15,7 @@ class CoincheGame:
         self.tricks = []
         self.scores = [0, 0]
         self.lead = lead
+        self.current_trick = []
 
         self.deck = Deck()
         hands = self.deck.deal()
@@ -69,24 +70,25 @@ class CoincheGame:
 
     def play(self):
         for i in range(8):
-            current_trick = []
             ordered_players = self.get_ordered_players()
             if self.verbose:
                 print(*zip(self.names, [p.hand for p in self.players]), sep="\n")
                 print(f"\n{self.names[ordered_players[0][0]]} starts the trick.")
+
             for idx, player in ordered_players:
-                card = player.play(self.tricks, current_trick)
-                current_trick.append(card)
-            score = sum(card.score for card in current_trick)
-            winner_player = ordered_players[self.wins_trick(current_trick)][0]
+                card = player.play(self)
+                self.current_trick.append(card)
+            score = sum(card.score for card in self.current_trick)
+            winner_player = ordered_players[self.wins_trick(self.current_trick)][0]
             self.lead = winner_player
             self.scores[winner_player % 2] += score
             if self.verbose:
                 print(
-                    f"{self.names[winner_player]} wins {current_trick = } for {score} points."
+                    f"{self.names[winner_player]} wins {self.current_trick = } for {score} points."
                 )
                 print("-" * 30)
-            self.tricks.append(current_trick)
+            self.tricks.append(self.current_trick)
+            self.current_trick = []
         self.scores[winner_player % 2] += 10  # 10 de der
 
         if self.target_score <= self.scores[self.bidding_team]:
