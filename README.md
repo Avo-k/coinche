@@ -13,5 +13,36 @@ for now I only have solved 2-player, zero-sum, perfect-information, determinist,
 
 When MCTS or Minimax algorithms were enough for those games ; exploring the future game tree. Now another dimension is to be considered, and lots of different game tree are possible from a single player perspective. 
 
-We then have to consider what information do we have, to guess which future game trees we should explore.
+We then have to consider what information do we have, to determine which future game trees we should explore.
 
+## La coinche
+
+brief rules explanation
+
+## What currently works
+
+I currently have a working coinche environment and 3 bots:
+
+### Random player 
+- **Betting**: toss a coin to bet +10 or pass until 100 is reached
+- **Playing**: play random legal move
+
+### Human player 
+- **Betting**: human input
+- **Playing**: human input
+
+### Baseline player 
+- **Betting**: bet on their best suit, how high is based on their number of point in hand + a "cocky" variable, to adjust how daring the bot is
+- **Playing**: play if has the best card in a suit, else lowest card
+
+
+## TODO
+
+### Oracle player
+
+They knows every hand and always play the best move. They consider every player is also an Oracle. I shall use MCTS to make them.
+
+
+### Skorm player
+
+The AI. Only know what a regular player would. Play their best. ISMCTS ?
