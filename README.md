@@ -17,7 +17,7 @@ We then have to consider what information do we have, to determine which future 
 
 ## La coinche
 
-brief rules explanation
+TODO: brief rules explanation
 
 ## What currently works
 

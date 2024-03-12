@@ -60,6 +60,13 @@ class CoincheGame:
         indexes = [p % 4 for p in range(self.lead, self.lead + 4)]
         return list(zip(indexes, players))
 
+    def wins_trick(self, trick):
+        assert len(trick) == 4
+        updated_values = [
+            v.value if v.suit != trick[0].suit else v.value + 10 for v in trick
+        ]
+        return max(range(len(updated_values)), key=updated_values.__getitem__)
+
     def play(self):
         for i in range(8):
             current_trick = []
@@ -71,7 +78,7 @@ class CoincheGame:
                 card = player.play(self.tricks, current_trick)
                 current_trick.append(card)
             score = sum(card.score for card in current_trick)
-            winner_player = ordered_players[game.wins_trick(current_trick)][0]
+            winner_player = ordered_players[self.wins_trick(current_trick)][0]
             self.lead = winner_player
             self.scores[winner_player % 2] += score
             if self.verbose:
@@ -90,41 +97,3 @@ class CoincheGame:
             self.scores[self.bidding_team ^ 1] = 160
 
         return self.scores
-
-    def wins_trick(self, trick):
-        assert len(trick) == 4
-        updated_values = [
-            v.value if v.suit != trick[0].suit else v.value + 10 for v in trick
-        ]
-        return max(range(len(updated_values)), key=updated_values.__getitem__)
-
-
-if __name__ == "__main__":
-    cocky = 36
-
-    binary_scores = [0, 0]
-    mega_scores = [0, 0]
-    games_won = [0, 0]
-    teams = ["Ivan Eloi", "Jean Jules"]
-
-    sample = 1000
-    for i in range(sample):
-        players = [
-            RandomPlayer(),
-            BaselinePlayer(cocky=cocky),
-            RandomPlayer(),
-            BaselinePlayer(cocky=cocky),
-        ]
-        game = CoincheGame(players, verbose=False)
-        scores = game.play()
-        mega_scores = [mega_scores[i] + scores[i] for i in range(2)]
-        binary_scores = [binary_scores[i] + (scores[i] > 0) for i in range(2)]
-
-        if max(mega_scores) >= 500:
-            games_won[mega_scores.index(max(mega_scores))] += 1
-            mega_scores = [0, 0]
-
-    print(f"{games_won = }")
-    print(
-        f"Team {teams[binary_scores.index(max(binary_scores))]} won {(max(binary_scores)/sample)*100:.1f} % of the {sample:_} games."
-    )
