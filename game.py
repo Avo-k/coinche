@@ -3,6 +3,7 @@ from tqdm import trange
 from itertools import cycle
 from utils import Deck, Bid
 from players import RandomPlayer, BaselinePlayer, HumanPlayer
+import copy
 
 
 class CoincheGame:
@@ -36,6 +37,8 @@ class CoincheGame:
         while len(passed_bid) < 4 or passed_bid[-3:] != [Bid()] * 3:
             idx, player = next(cycle_players)
             bid = player.bid(passed_bid)
+            if bid.value:
+                assert not bid.value % 10 and all(b.value < bid.value for b in passed_bid if b.value)
             passed_bid.append(bid)
 
         winner_idx, _ = next(cycle_players)
@@ -63,9 +66,7 @@ class CoincheGame:
 
     def wins_trick(self, trick):
         assert len(trick) == 4
-        updated_values = [
-            v.value if v.suit != trick[0].suit else v.value + 10 for v in trick
-        ]
+        updated_values = [v.value if v.suit != trick[0].suit else v.value + 10 for v in trick]
         return max(range(len(updated_values)), key=updated_values.__getitem__)
 
     def play(self):
@@ -83,9 +84,7 @@ class CoincheGame:
             self.lead = winner_player
             self.scores[winner_player % 2] += score
             if self.verbose:
-                print(
-                    f"{self.names[winner_player]} wins {self.current_trick = } for {score} points."
-                )
+                print(f"{self.names[winner_player]} wins {self.current_trick = } for {score} points.")
                 print("-" * 30)
             self.tricks.append(self.current_trick)
             self.current_trick = []
@@ -99,3 +98,101 @@ class CoincheGame:
             self.scores[self.bidding_team ^ 1] = 160
 
         return self.scores
+
+    def copy(self):
+        "Return a deep copy of the game state."
+        newplayers = [copy.deepcopy(player) for player in self.players]
+        new_game = CoincheGame(players=newplayers, lead=self.lead, verbose=self.verbose)
+        new_game.tricks = self.tricks.copy()
+        new_game.scores = self.scores.copy()
+        new_game.current_trick = self.current_trick.copy()
+        return new_game
+
+    def is_terminal(self):
+        return len(self.tricks) == 8
+
+
+def get_card_name(index):
+    values = ["7", "8", "9", "10", "J", "Q", "K", "A"]
+    suits = ["♠", "♥", "♦", "♣"]
+    return values[index % 8] + suits[index // 8]
+
+
+CARD_STR = {i: get_card_name(i) for i in range(32)}
+
+
+class SimpleCoincheGame:
+
+    def __init__(self, current_lead, verbose=False):
+        self.verbose = verbose
+        self.tricks = []
+        self.scores = [0, 0]
+
+        self.current_lead = current_lead
+        self.current_trick = []
+
+    def deal(self):
+        # Donne
+        self.deck = list(range(32))
+        random.shuffle(self.deck)
+        self.hands = [self.deck[i : i + 8] for i in self.deck]
+        self.deck = set(range(32))
+
+    def bidding(self):
+        # Annonces
+        passed_bid = []  # [(value: int, suit: int)]
+        cycle_players = cycle(enumerate(self.agents))
+        # until there is 3 consecutive pass
+        while len(passed_bid) < 4 or passed_bid[-3:] != [(0, 0)] * 3:
+            idx, player = next(cycle_players)
+            bid = player.bid(passed_bid)
+            if bid[0]:
+                assert not bid[0] % 10 and all(b[0] < bid[0] for b in passed_bid if b[0])
+            passed_bid.append(bid)
+        winner_idx, _ = next(cycle_players)
+        winner_bid = passed_bid[-4]
+
+        self.bidding_team = winner_idx % 2
+        self.target_score = winner_bid[0]
+        self.trump = winner_bid[1]
+
+        non_trump_scores = [0, 0, 0, 10, 2, 3, 4, 11]
+        trump_scores = [0, 0, 14, 10, 20, 3, 4, 11]
+        self.card_scores = non_trump_scores * self.trump + trump_scores + non_trump_scores * (3 - self.trump)
+
+    def is_terminal(self):
+        return len(self.tricks) == 8
+
+    def get_next_agent_index(self):
+        return (self.lead + len(self.current_trick)) % 4
+
+    def get_card_value(self, card):
+        value, suit = card // 8, card % 8
+        if suit == self.trump:
+            value += 100
+        if suit == self.current_lead:
+            value += 10
+        return value
+
+    def get_card_score(self, card):
+        return self.card_scores[card]
+
+    def trick_results(self, trick):
+        "from a trick, return the winner index (in the trick) and points scored."
+        values = [self.get_card_value(card) for card in trick]
+        winner_index = values.index(max(values))
+        score = sum(self.get_card_score(card) for card in trick)
+        return winner_index, score
+
+    def step(self):
+        agent = self.agents[(self.current_lead + len(self.current_trick)) % 4]
+        card = agent.play()
+        assert card in self.hands[self.current_lead]
+        self.current_trick.append(card)
+        if len(self.current_trick) == 4:
+            winner_index, score = self.trick_results(self.current_trick)
+            self.current_lead = (winner_index + self.current_lead) % 4
+            self.scores[self.current_lead % 2] += score
+            self.tricks.append(self.current_trick)
+            self.current_trick = []
+        return self.is_terminal()

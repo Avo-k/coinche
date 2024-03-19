@@ -1,25 +1,30 @@
 from players import RandomPlayer, BaselinePlayer, HumanPlayer
 from game import CoincheGame
+from oracle_mcts import OraclePlayer
+
+
+def play_game(players):
+    game = CoincheGame(players, verbose=False)
+    scores = game.play()
+    return scores
 
 
 if __name__ == "__main__":
-    cocky = 36
 
     binary_scores = [0, 0]
     mega_scores = [0, 0]
     games_won = [0, 0]
     teams = ["Ivan Eloi", "Jean Jules"]
 
-    sample = 1000
+    sample = 10
     for i in range(sample):
         players = [
             RandomPlayer(),
-            BaselinePlayer(cocky=cocky),
+            OraclePlayer(),
             RandomPlayer(),
-            BaselinePlayer(cocky=cocky),
+            BaselinePlayer(),
         ]
-        game = CoincheGame(players, verbose=False)
-        scores = game.play()
+        scores = play_game(players)
         mega_scores = [mega_scores[i] + scores[i] for i in range(2)]
         binary_scores = [binary_scores[i] + (scores[i] > 0) for i in range(2)]
 

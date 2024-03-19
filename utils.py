@@ -64,7 +64,8 @@ class Bid:
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.hand = None
         self.trump = None
 
@@ -84,10 +85,7 @@ class Player:
         elif len(current_trick) == 1:
             return False
         else:
-            updated_values = [
-                v.value if v.suit != leading_suit else v.value + 10
-                for v in current_trick
-            ]
+            updated_values = [v.value if v.suit != leading_suit else v.value + 10 for v in current_trick]
             return max(updated_values) == updated_values[-2]  # partenaire est maitre
 
     def get_legal_trumps(self, current_trick):
@@ -101,16 +99,14 @@ class Player:
         else:
             return [card for card in trumps if card > max(current_trick)]
 
-    def get_legal_cards(self, current_trick: list):
+    def get_legal_actions(self, current_trick: list):
         if not current_trick:
             return self.hand
 
         else:
             leading_suit = current_trick[0].suit
             legal_trumps = self.get_legal_trumps(current_trick)
-            if any(
-                card.suit == leading_suit for card in self.hand
-            ):  # tu as la couleur demandée
+            if any(card.suit == leading_suit for card in self.hand):  # tu as la couleur demandée
                 if leading_suit == self.trump:  # il faut monter si c'est l'atout
                     if legal_trumps:
                         return legal_trumps
@@ -119,9 +115,7 @@ class Player:
                 else:
                     return [card for card in self.hand if card.suit == leading_suit]
 
-            if len(current_trick) > 1 and self.partner_is_leading(
-                current_trick, leading_suit
-            ):  # tu peux pisser
+            if len(current_trick) > 1 and self.partner_is_leading(current_trick, leading_suit):  # tu peux pisser
                 return self.hand
 
             if legal_trumps:  # tu coupes si possible
