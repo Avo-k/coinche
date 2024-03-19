@@ -609,17 +609,17 @@ def main():
 
 
 if __name__ == "__main__":
-    pr = cProfile.Profile()
-    pr.enable()
 
-    main()  # Call the main function where your code is executed
+    main()
 
-    pr.disable()
-
-    pr.dump_stats("profile_results.prof")
-
-    s = io.StringIO()
-    sortby = "cumulative"
-    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    ps.print_stats()
-    print(s.getvalue())
+    # # PROFILE
+    # pr = cProfile.Profile()
+    # pr.enable()
+    # main()  # Call the main function where your code is executed
+    # pr.disable()
+    # pr.dump_stats("profile_results.prof")
+    # s = io.StringIO()
+    # sortby = "cumulative"
+    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    # ps.print_stats()
+    # print(s.getvalue())
