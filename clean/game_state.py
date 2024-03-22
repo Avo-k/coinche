@@ -151,7 +151,7 @@ class GameState:
 
         if verbose:
             for p, h in zip(players, hands):
-                print(f"{p.name}: {pprint_trick(h)}")
+                print(f"{p.name}: {pprint_trick(list(sorted(h)))}")
 
         bids, belote_rebelote = bidding_phase(players, current_lead, hands, verbose=True)
         betting_team, bet_value, trump = bids[-1]
