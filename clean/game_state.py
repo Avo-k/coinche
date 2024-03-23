@@ -9,7 +9,7 @@ from itertools import chain
 from tqdm import trange
 
 BELOTE_REBELOTE = {t: (5 + 8 * t, 6 + 8 * t) for t in range(4)}
-SUITS = '♠♥♦♣'
+SUITS = "♠♥♦♣"
 
 
 def get_empty_info_dict():
@@ -37,12 +37,13 @@ def bidding_phase(players, current_lead, hands, verbose):
     bids = []
     best_bid = 1
 
-    # while list(map(lambda x: x[1], bids[-3:])) != [None]*3:
-    while len(bids) < 4:
+    while len(bids) < 4 or any(bid[1] for bid in bids[-3:]):
         player = (current_lead + len(bids)) % 4
         trump, value = players[player].bid(hands[player], bids)
 
-        assert not value or value > best_bid, f"{players[player].name} tried to bid {value} while best bid is {best_bid}"
+        assert (
+            not value or value > best_bid
+        ), f"{players[player].name} tried to bid {value} while best bid is {best_bid}"
         best_bid = value or best_bid
 
         bids.append((player, value, trump))
@@ -55,7 +56,7 @@ def bidding_phase(players, current_lead, hands, verbose):
 
     winning_bid = bids[-4]
     _, value, trump = winning_bid
-    
+
     for player in range(4):
         if BELOTE_REBELOTE[trump][0] in hands[player] and BELOTE_REBELOTE[trump][1] in hands[player]:
             belote_rebelote = player % 2
@@ -87,7 +88,7 @@ class GameState:
 
     def __init__(
         self,
-        names: list[str],  # 4 
+        names: list[str],  # 4
         bids: list[tuple[int]],  # [(player, value, trump) ...]
         bet_value: int,  # 80 to 180
         betting_team: int,  # 0: 1st and 3rd players, 1: 2nd and 4th players
@@ -153,7 +154,7 @@ class GameState:
             for p, h in zip(players, hands):
                 print(f"{p.name}: {pprint_trick(list(sorted(h)))}")
 
-        bids, belote_rebelote = bidding_phase(players, current_lead, hands, verbose=True)
+        bids, belote_rebelote = bidding_phase(players, current_lead, hands, verbose=verbose)
         betting_team, bet_value, trump = bids[-1]
         betting_team = betting_team % 2
 
@@ -230,7 +231,7 @@ class GameState:
 
     def determinize(self, player_index: int, unseen_cards: list[int]):
         "Return a potential version of the game state where all information that a given player cannot know is randomized"
-        if not unseen_cards: # last_card
+        if not unseen_cards:  # last_card
             return self.copy()
 
         # SUR
@@ -260,7 +261,7 @@ class GameState:
                 if len(could_be_their_card[card]) == 1:
                     next_player = could_be_their_card[card][0]
                     break
-            else: # choose the player with the least possible cards
+            else:  # choose the player with the least possible cards
                 complexity_order = {p: [c for c in unseen_cards if not_ruff(p, c)] for p in players}
                 if not players:
                     print(player_index)
@@ -272,7 +273,7 @@ class GameState:
 
             random_hands[next_player].append(card)
             unseen_cards.remove(card)
-            if len(random_hands[next_player])==len(self.hands[next_player]):
+            if len(random_hands[next_player]) == len(self.hands[next_player]):
                 players.remove(next_player)
 
         return GameState(
@@ -458,7 +459,6 @@ def play_n_random_cards(n: int, game_state: GameState, verbose=False):
         n -= 1
 
 
-
 class Agent:
     def __init__(self, name="Agent"):
         self.name = name
@@ -476,7 +476,7 @@ class RandomAgent(Agent):
 
     def play(self, game_state: GameState):
         return random.choice(get_legal_actions(gs=game_state))
-    
+
     def bid(self, hand, bids):
         if any(bid[1] is not None for bid in bids):
             return None, None
@@ -489,8 +489,8 @@ class HumanAgent(Agent):
         super().__init__(name=name)
 
     def play(self, game_state: GameState):
-        
-        print("-"*3)
+
+        print("-" * 3)
         legal_actions = get_legal_actions(gs=game_state)
 
         if len(legal_actions) == 1:
@@ -499,7 +499,7 @@ class HumanAgent(Agent):
 
         print(f"It's {self.name}'s turn")
         print(f"Legal actions: {get_cards_names(legal_actions)}")
-        print(f"card ints    : {" ".join([f"{c:>3}" for c in legal_actions])}")
+        print(f"card ints    : {' '.join([f'{c:>3}' for c in legal_actions])}")
         card = int(input("Choose a card: "))
 
         while card not in legal_actions:
@@ -514,10 +514,10 @@ class HumanAgent(Agent):
         value = int(input("Value: "))
         trump = int(input("Trump: "))
         return value, trump
-    
+
 
 def ucb1(parent, child, parent_visit_log, temp=3):
-    exploitation = child.value / 200 / child.visits
+    exploitation = child.value / 300 / child.visits
     exploration = math.sqrt(parent_visit_log / child.visits)
     return exploitation + temp * exploration
 
@@ -532,7 +532,7 @@ class Node:
         self.is_fully_expanded = False
 
     def __repr__(self):
-        return f"Node(visits={self.visits:_<6}, predicted_score={self.value/self.visits if self.visits else 0:.0f})"
+        return f"Node(visits={self.visits:>6}, predicted_score={self.value/self.visits if self.visits else 0:.0f})"
 
     def is_terminal(self):
         return len(self.game_state.tricks) == 8
@@ -565,7 +565,7 @@ class OracleAgent(Agent):
         root = Node(game_state.copy(), parent=None)
 
         for _ in range(self.iterations):
-            
+
             leaf = self.traverse(root)  # Selection
             simulation_result = self.rollout(leaf.game_state.copy())  # Simulation
             self.backpropagate(leaf, simulation_result)  # Backpropagation
@@ -581,7 +581,7 @@ class OracleAgent(Agent):
         while not node.is_terminal():
             if not node.is_fully_expanded:
                 exp = self.expand(node)
-                if exp: # this is a hack, not sure if correct
+                if exp:  # this is a hack, not sure if correct
                     return exp
                 node = node.select()
             else:
@@ -632,14 +632,16 @@ class OracleAgent(Agent):
         last_card_played = best_move_node.game_state.last_card_played
 
         assert 0 <= last_card_played < 32, f"{self.name} tried to play {last_card_played} which is not a card"
-        assert last_card_played in get_legal_actions(node.game_state), f"{self.name} tried to play {get_card_name(last_card_played)} which is not in their legal cards"
+        assert last_card_played in get_legal_actions(
+            node.game_state
+        ), f"{self.name} tried to play {get_card_name(last_card_played)} which is not in their legal cards"
 
         return last_card_played
 
 
-def pretend_ownership(game_state: GameState, player_index: int, card:int):
+def pretend_ownership(game_state: GameState, player_index: int, card: int):
     "modify in place a game state where the player has a given card in their hand"
-    
+
     for p in range(4):
         if card in game_state.hands[p]:
             if p == player_index:
@@ -667,10 +669,10 @@ class DuckAgent(OracleAgent):
 
         # update game_state.info
         game_state.gather_informations()
-        unseen_cards = game_state.get_unseen_cards(self.player_index) 
+        unseen_cards = game_state.get_unseen_cards(self.player_index)
 
         if len(game_state.tricks) > 5:
-            iterations = min(self.iterations, 1_000*(8-len(game_state.tricks)))
+            iterations = min(self.iterations, 1_000 * (8 - len(game_state.tricks)))
         else:
             iterations = self.iterations
 
@@ -689,7 +691,7 @@ class DuckAgent(OracleAgent):
 
         if self.verbose:
             print(f"{self.name}: {_ + 1} iterations")
-            for child in root.children:
+            for child in sorted(root.children, key=lambda x: x.visits, reverse=True):
                 print("\t", get_card_name(child.game_state.last_card_played), child)
 
         return self.best_move(root)
@@ -700,13 +702,13 @@ class DuckAgent(OracleAgent):
         hand = game_state.hands[self.player_index]
         unseen_cards = [c for c in range(32) if c not in hand]
 
-        for _ in range(self.iterations // 4):
+        for _ in range(self.iterations):
 
             possible_start = game_state.copy()
             _unseen_cards = unseen_cards.copy()
 
             if possible_start.get_current_player() != self.player_index:
-            
+
                 random.shuffle(_unseen_cards)
                 random_hands = [_unseen_cards[i : i + 8] for i in (0, 8, 16)]
                 random_hands.insert(self.player_index, hand)
@@ -740,7 +742,6 @@ class DuckAgent(OracleAgent):
         best_move_node = max(root.children, key=lambda x: x.visits)
         return round(best_move_node.value / best_move_node.visits)
 
-
     def bid(self, hand, bids):
 
         if not self.predicted_scores:
@@ -758,7 +759,7 @@ class DuckAgent(OracleAgent):
             assert list(sorted(sum(hands, []))) == list(range(32)), str(hands)
 
             for potential_trump in range(4):
-                
+
                 if self.verbose:
                     print(self.name, f"thinking about announcing {SUITS[potential_trump]}")
 
@@ -786,9 +787,12 @@ class DuckAgent(OracleAgent):
                 self.predicted_scores.append((self.estimate_score(game_state.copy()) - 50))
 
             if self.verbose:
-                print(f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.predicted_scores)]}")
+                print(
+                    f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.predicted_scores)]}"
+                )
 
-        best_bid = max(enumerate(self.predicted_scores), key=lambda x: x[1])//10*10
+        best_bid = max(enumerate(self.predicted_scores), key=lambda x: x[1])
+        best_bid = (best_bid[0], best_bid[1] // 10 * 10)
 
         last_bid_value = 0
         for bid in bids[::-1]:
@@ -808,9 +812,9 @@ def main():
     # 46 - 110 carreau - team 2
     # 23 - 90 coeur - team 1
 
-    n_iter = 1_000_000
+    n_iter = 10_000
 
-    for i in range(1):
+    for i in trange(100):
 
         # randys = [
         #     RandomAgent(name="Jean"),
@@ -833,26 +837,26 @@ def main():
         # ]
 
         ducks = [
-            DuckAgent(name="Jean", iterations=n_iter, verbose=True),
-            DuckAgent(name="Ivan", iterations=n_iter, verbose=True),
-            DuckAgent(name="Jule", iterations=n_iter, verbose=True),
-            DuckAgent(name="Eloi", iterations=n_iter, verbose=True),
+            DuckAgent(name="Jean", iterations=n_iter, verbose=False),
+            DuckAgent(name="Ivan", iterations=n_iter, verbose=False),
+            DuckAgent(name="Jule", iterations=n_iter, verbose=False),
+            DuckAgent(name="Eloi", iterations=n_iter, verbose=False),
         ]
 
         game_state = GameState.fresh_game(
             players=ducks,
             current_lead=0,
             # seed=543536635,
-            verbose=True,
+            verbose=False,
         )
-        
-        print(game_state)
+
+        # print(game_state)
 
         # game_state2 = GameState.fresh_game(
         #     names=["Ivan", "Jean", "Eloi", "Jules"], bet_value=110, betting_team=1, trump=2, coinche=1, seed=46
         # )
 
-        play_one_game(ducks, game_state, verbose=True)
+        play_one_game(ducks, game_state, verbose=False)
 
         # for _ in range(3):
         #     for i in range(4):
