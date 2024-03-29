@@ -7,6 +7,7 @@ import copy
 from functools import lru_cache
 from itertools import chain
 from tqdm import trange
+import sys
 
 # BELOTE_REBELOTE = {0: (5, 6), 1: (13, 14), 2: (21, 22), 3: (29, 30)}
 BELOTE_REBELOTE = {t: (t * 8 + 5, t * 8 + 6) for t in range(4)}
@@ -241,9 +242,11 @@ class GameState:
 
         while next_illegal := self.get_next_illegal_cards(random_hands):
             p, card = next_illegal
-            possible_trading_players = [tp for tp in other_players if self.can_own(tp, card)]
-            random.shuffle(possible_trading_players)
-            for trading_player in possible_trading_players:
+            poss_traid_play = [tp for tp in other_players if self.can_own(tp, card)]
+            if len(poss_traid_play) == 2 and random.random() < 0.5:  # len can be 1 or 2
+                # random.shuffle(poss_traid_play)
+                poss_traid_play[0], poss_traid_play[1] = poss_traid_play[1], poss_traid_play[0]
+            for trading_player in poss_traid_play:
                 for trade_card in random_hands[trading_player]:
                     if self.can_own(p, trade_card) and self.can_own(trading_player, card):
                         random_hands[p][random_hands[p].index(card)] = trade_card
@@ -291,7 +294,7 @@ class GameState:
         )
         return "\n---\n".join((contract, "\n".join(hands), passed_tricks, str(self.scores))) + "\n---"
 
-    @lru_cache(maxsize=128)  # could be 1 ?
+    # @lru_cache(maxsize=128)  # could be 1 ?
     def get_legal_actions(self):
 
         if not self.current_trick:  # also works for already finished game
@@ -688,7 +691,7 @@ class OracleAgent(Agent):
 class DuckAgent(OracleAgent):
     def __init__(self, name="Duck", iterations=10_000, verbose=False):
         super().__init__(name=name, iterations=iterations, verbose=verbose)
-        self.predicted_scores = []
+        self.best_bids = []
 
     def play(self, root_state: GameState):
 
@@ -747,6 +750,7 @@ class DuckAgent(OracleAgent):
         for _ in range(self.iterations):
 
             node = root_node
+            scores_for_one_trump = []
 
             # Determine
             state = root_state.determinize(self.player_index)  # determinize
@@ -773,6 +777,8 @@ class DuckAgent(OracleAgent):
                 action = random.choice(possible_actions)
                 play_one_card(action, state)
 
+            scores_for_one_trump.append(state.scores[self.player_index % 2])
+
             # Backpropagate
             while node:
                 node.update(state)
@@ -790,10 +796,27 @@ class DuckAgent(OracleAgent):
 
         return round(best_move_node.value / best_move_node.visits)
 
+    def update_best_bids(self, scores_for_each_trumps):
+        for trump, scores in enumerate(scores_for_each_trumps):
+            for bid in range(80, 190, 10):
+                if sum(score > bid for score in scores) / len(scores) > 0.9:
+                    continue
+                elif bid == 80:
+                    self.best_bids.append(0)
+                    break
+                else:
+                    self.best_bids.append(bid - 10)
+                    break
+            else:
+                self.best_bids.append(180)
+
     def bid(self, hand, current_lead, bids):
+
         if not self.predicted_scores:
             player_idx = (current_lead + len(bids)) % 4
             self.player_index = player_idx
+
+            scores_for_each_trumps = []
 
             unseen_cards = [c for c in range(32) if c not in hand]
             random.shuffle(unseen_cards)
@@ -806,7 +829,7 @@ class DuckAgent(OracleAgent):
                 game_state = GameState(
                     names=["N", "E", "S", "W"],
                     bids=[],
-                    bet_value=80,
+                    bet_value=0,
                     betting_team=self.player_index % 2,
                     trump=potential_trump,
                     coinche=1,
@@ -819,14 +842,17 @@ class DuckAgent(OracleAgent):
                     scores=[0, 0],
                     info=get_empty_info_dict(),
                 )
-                self.predicted_scores.append(max(0, self.estimate_score(game_state) - 80))
+                # scores_for_each_trumps.append(self.estimate_score(game_state.copy()))
+                self.best_bids.append(self.estimate_score(game_state.copy()))
+
+            # self.update_best_bids(scores_for_each_trumps)
 
             if self.verbose:
                 print(
-                    f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.predicted_scores)]}"
+                    f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.best_bids)]}"
                 )
 
-        best_bid = max(enumerate(self.predicted_scores), key=lambda x: x[1])
+        best_bid = max(enumerate(self.best_bids), key=lambda x: x[1])
         best_bid = (best_bid[0], best_bid[1] // 10 * 10)
 
         last_bid_value = 70
@@ -876,31 +902,10 @@ def main():
     # 46 - 110 carreau - team 2
     # 23 - 90 coeur - team 1
 
-    n_iter = 1000
+    n_iter = 100_000
     big_scores = [0, 0]
 
     for i in range(1):
-
-        # randys = [
-        #     RandomAgent(name="Jean"),
-        #     RandomAgent(name="Ivan"),
-        #     RandomAgent(name="Jules"),
-        #     RandomAgent(name="Eloi"),
-        # ]
-
-        # players = [
-        #     OracleAgent(name="Jean", iterations=n_iter, verbose=True),
-        #     # HumanAgent(name="Jean"),
-        #     OracleAgent(name="Ivan", iterations=n_iter, verbose=True),
-        #     # DuckAgent(name="Ivan", iterations=n_iter, verbose=True),
-        #     # DuckAgent(name="Ivan", iterations=n_iter, verbose=True),
-        #     # HumanAgent(name="Gaspard"),
-        #     OracleAgent(name="Jule", iterations=n_iter, verbose=True),
-        #     # HumanAgent(name="Jule"),
-        #     OracleAgent(name="Eloi", iterations=n_iter, verbose=True),
-        #     # DuckAgent(name="Eloi", iterations=n_iter, verbose=True),
-        #     # HumanAgent(name="Roland"),
-        # ]
 
         players = [
             DuckAgent(name="Jean", iterations=n_iter, verbose=True),
@@ -919,48 +924,26 @@ def main():
             verbose=True,
         )
 
-        # print(game_state)
-        # game_state2 = GameState.fresh_game(
-        #     names=["Ivan", "Jean", "Eloi", "Jules"], bet_value=110, betting_team=1, trump=2, coinche=1, seed=46
-        # )
-
         play_one_game(players, game_state, verbose=True)
 
         big_scores[0] += game_state.scores[0]
         big_scores[1] += game_state.scores[1]
 
-        # for _ in range(3):
-        #     for i in range(4):
-        #         card = ducks[i].play(game_state.copy())
-        #         play_one_card(card, game_state, verbose=True)
-        #     print(game_state.scores)
-        #     print("-" * 30)
-
-        # for i in range(2):
-        #     card = AGENTS[i].play(game_state)
-        #     play_one_card(card, game_state, verbose=True)
-
-        # print(game_state)
-        # print("-" * 50)
-        # game_state.gather_informations()
-        # unseen_cards = game_state.get_unseen_cards(0)
-        # deter = game_state.determinize(0, unseen_cards)
-        # print(pprint_tricks(deter.hands))
-        # print("-" * 50)
-
-        # print(game_state)
-        # print(game_state.scores)
+        print(game_state.scores)
 
     print(big_scores)
 
 
 if __name__ == "__main__":
 
-    # main()
+    with open("last_game_played.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
 
-    # PROFILE
-    pr = cProfile.Profile()
-    pr.enable()
-    main()  # Call the main function where your code is executed
-    pr.disable()
-    pr.dump_stats("profile_results.prof")
+        main()
+
+    # # PROFILE
+    # pr = cProfile.Profile()
+    # pr.enable()
+    # main()  # Call the main function where your code is executed
+    # pr.disable()
+    # pr.dump_stats("profile_results.prof")
