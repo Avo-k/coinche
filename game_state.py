@@ -162,7 +162,7 @@ class GameState:
             info=get_empty_info_dict(),
         )
 
-    def copy(self):
+    def copy(self, hands=None):
         return GameState(
             names=self.names.copy(),
             bids=self.bids.copy(),
@@ -170,7 +170,7 @@ class GameState:
             betting_team=self.betting_team,
             trump=self.trump,
             coinche=self.coinche,
-            hands=[hand.copy() for hand in self.hands],
+            hands=[hand.copy() for hand in self.hands] if hands is None else hands,
             tricks=[trick.copy() for trick in self.tricks],
             leads=self.leads.copy(),
             current_trick=self.current_trick.copy(),
@@ -204,6 +204,13 @@ class GameState:
     def can_own(self, player, card):
         return not self.info["ruff"][player][card // 8]
 
+    def get_next_illegal_cards(self, hands):
+        for p, hand in enumerate(hands):
+            for card in hand:
+                if not self.can_own(p, card):
+                    return p, card
+        return None
+
     # SUR
     # si un joueur coupe ou pisse, il n'a plus la couleur
     # si un joueur pisse et que partenaire pas maitre, il n'a pas d'atout
@@ -214,50 +221,62 @@ class GameState:
     # si le joueur annonce une couleur il a au moins 1 carte de cette couleur
 
     def determinize(self, player_index: int):
-
         self.gather_informations()
-
         unseen_cards = self.get_unseen_cards(player_index)
-
         if not unseen_cards:
             return self.copy()
 
+        random.shuffle(unseen_cards)
+        other_players = {p for p in range(4) if p != player_index}
+
         random_hands = [[] for _ in range(4)]
-        random_hands[player_index] = self.hands[player_index].copy()
+        pointer = 0
+        for p in range(4):
+            if p == player_index:
+                random_hands[p] = self.hands[p].copy()
+            else:
+                new_pointer = pointer + len(self.hands[p])
+                random_hands[p] = unseen_cards[pointer:new_pointer]  # do i rly have to copy ?
+                pointer = new_pointer
 
-        players = set(range(4))
-        players.remove(player_index)
-        could_be_their_card = {c: [p for p in players if self.can_own(p, c)] for c in unseen_cards}
-        unseen_cards.sort(key=lambda x: len(could_be_their_card[x]))
+        while next_illegal := self.get_next_illegal_cards(random_hands):
+            p, card = next_illegal
+            possible_trading_players = [tp for tp in other_players if self.can_own(tp, card)]
+            random.shuffle(possible_trading_players)
+            for trading_player in possible_trading_players:
+                for trade_card in random_hands[trading_player]:
+                    if self.can_own(p, trade_card) and self.can_own(trading_player, card):
+                        random_hands[p][random_hands[p].index(card)] = trade_card
+                        random_hands[trading_player][random_hands[trading_player].index(trade_card)] = card
+                        break
+                else:
+                    continue
+                break
+            else:
+                second = [tp for tp in other_players if self.can_own(tp, card)][0]
+                third = [tp for tp in other_players if tp != second and tp != p][0]
+                assert {p, second, third} == set(other_players)
 
-        while unseen_cards:
-            c = unseen_cards.pop(0)
-            next_player = random.choice(could_be_their_card[c])
-            random_hands[next_player].append(c)
+                for trade_card in random_hands[second]:
+                    if self.can_own(third, trade_card):
+                        for trade_trade_card in random_hands[third]:
+                            if self.can_own(p, trade_trade_card):
+                                random_hands[p][random_hands[p].index(card)] = trade_trade_card
+                                random_hands[third][random_hands[third].index(trade_trade_card)] = card
+                                random_hands[second][random_hands[second].index(trade_card)] = trade_trade_card
+                                break
+                        else:
+                            continue
+                        break
+                else:
+                    print([(tp, self.can_own(p, card)) for tp in other_players])
+                    print(get_card_name(card))
+                    print(pprint_tricks(self.hands))
+                    print(self.info["ruff"])
+                    print(pprint_tricks(random_hands))
+                    raise ValueError("No possible trade")
 
-            if len(random_hands[next_player]) == len(self.hands[next_player]):
-                for p in could_be_their_card.values():
-                    if next_player in p:
-                        p.remove(next_player)
-
-            unseen_cards.sort(key=lambda x: len(could_be_their_card[x]))
-
-        return GameState(
-            names=self.names.copy(),
-            bids=[bid.copy() for bid in self.bids],
-            bet_value=self.bet_value,
-            betting_team=self.betting_team,
-            trump=self.trump,
-            coinche=self.coinche,
-            hands=random_hands,
-            tricks=[trick.copy() for trick in self.tricks],
-            leads=self.leads.copy(),
-            current_trick=self.current_trick.copy(),
-            current_lead=self.current_lead,
-            last_card_played=self.last_card_played,
-            scores=self.scores.copy(),
-            info={"ruff": [p.copy() for p in self.info["ruff"]]},
-        )
+        return self.copy(hands=random_hands)
 
     def get_current_player(self):
         return (self.current_lead + len(self.current_trick)) % 4
@@ -272,7 +291,7 @@ class GameState:
         )
         return "\n---\n".join((contract, "\n".join(hands), passed_tricks, str(self.scores))) + "\n---"
 
-    # @lru_cache(maxsize=128)  # could be 1 ?
+    @lru_cache(maxsize=128)  # could be 1 ?
     def get_legal_actions(self):
 
         if not self.current_trick:  # also works for already finished game
@@ -314,48 +333,6 @@ class GameState:
 def get_higher_trumps(current_trick, hand_trumps, ranks):
     max_trick_trump_value = max(ranks[card] for card in current_trick)
     return [card for card in hand_trumps if ranks[card] > max_trick_trump_value]
-
-
-# @lru_cache(maxsize=128)  # could be 1 ?
-# def get_legal_actions(gs: GameState):
-
-#     assert len(gs.tricks) < 8, "The game is already over"
-
-#     if not gs.current_trick:  # no card played
-#         return gs.hands[gs.current_lead]
-
-#     leading_suit = gs.current_trick[0] // 8
-#     ranks = get_ranks(gs.trump, leading_suit)
-
-#     hand = gs.hands[gs.get_current_player()]
-
-#     assert hand, "You have no card in your hand"
-
-#     hand_suits = [card // 8 for card in hand]
-#     hand_trumps = [card for card in hand if card // 8 == gs.trump]
-
-#     if leading_suit in hand_suits:  # tu as la couleur demandée
-#         if leading_suit == gs.trump:  # atout demandé
-#             if hand_trumps:
-#                 higher_trumps = get_higher_trumps(gs.current_trick, hand_trumps, ranks)
-#                 return higher_trumps if higher_trumps else hand_trumps
-#             else:  # patatou
-#                 return hand
-#         else:
-#             return [card for i, card in enumerate(hand) if hand_suits[i] == leading_suit]
-
-#     # tu n'as pas la couleur demandée
-#     current_trick_ranks = [ranks[card] for card in gs.current_trick]
-#     partner_is_winning = False if len(gs.current_trick) == 1 else max(current_trick_ranks) == current_trick_ranks[-2]
-
-#     if partner_is_winning:
-#         return hand
-
-#     if hand_trumps:
-#         higher_trumps = get_higher_trumps(gs.current_trick, hand_trumps, ranks)
-#         return higher_trumps if higher_trumps else hand_trumps
-
-#     return hand
 
 
 @lru_cache(maxsize=None)
@@ -444,7 +421,7 @@ def play_one_card(card, game_state: GameState, verbose=False):
         ranks = get_ranks(game_state.trump, game_state.current_trick[0] // 8)
         winner_card = max(game_state.current_trick, key=lambda x: ranks[x])
         indexed_trick = {card: i % 4 for card, i in zip(game_state.current_trick, range(idx + 1, idx + 5))}
-        current_trick_ordered = list(sorted(indexed_trick))
+        current_trick_ordered = list(sorted(indexed_trick, key=lambda x: indexed_trick[x]))
 
         game_state.scores[indexed_trick[winner_card] % 2] += sum(scores[card] for card in game_state.current_trick)
 
@@ -712,7 +689,6 @@ class DuckAgent(OracleAgent):
     def __init__(self, name="Duck", iterations=10_000, verbose=False):
         super().__init__(name=name, iterations=iterations, verbose=verbose)
         self.predicted_scores = []
-        self.position_explored = set()
 
     def play(self, root_state: GameState):
 
@@ -850,8 +826,6 @@ class DuckAgent(OracleAgent):
                     f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.predicted_scores)]}"
                 )
 
-                print(len(self.position_explored), "positions explored")
-
         best_bid = max(enumerate(self.predicted_scores), key=lambda x: x[1])
         best_bid = (best_bid[0], best_bid[1] // 10 * 10)
 
@@ -902,7 +876,8 @@ def main():
     # 46 - 110 carreau - team 2
     # 23 - 90 coeur - team 1
 
-    n_iter = 100_000
+    n_iter = 1000
+    big_scores = [0, 0]
 
     for i in range(1):
 
@@ -929,15 +904,18 @@ def main():
 
         players = [
             DuckAgent(name="Jean", iterations=n_iter, verbose=True),
+            # RandomAgent(name="Ivan"),
             DuckAgent(name="Ivan", iterations=n_iter, verbose=True),
             DuckAgent(name="Jule", iterations=n_iter, verbose=True),
             DuckAgent(name="Eloi", iterations=n_iter, verbose=True),
+            # RandomAgent(name="Eloi"),
         ]
 
+        # print(i)
         game_state = GameState.fresh_game(
             players=players,
             # hands=[[*range(i, i + 8)] for i in [0, 8, 16, 24]],
-            # seed=3954343,
+            # seed=i,
             verbose=True,
         )
 
@@ -947,6 +925,9 @@ def main():
         # )
 
         play_one_game(players, game_state, verbose=True)
+
+        big_scores[0] += game_state.scores[0]
+        big_scores[1] += game_state.scores[1]
 
         # for _ in range(3):
         #     for i in range(4):
@@ -970,14 +951,16 @@ def main():
         # print(game_state)
         # print(game_state.scores)
 
+    print(big_scores)
+
 
 if __name__ == "__main__":
 
-    main()
+    # main()
 
-    # # PROFILE
-    # pr = cProfile.Profile()
-    # pr.enable()
-    # main()  # Call the main function where your code is executed
-    # pr.disable()
-    # pr.dump_stats("profile_results.prof")
+    # PROFILE
+    pr = cProfile.Profile()
+    pr.enable()
+    main()  # Call the main function where your code is executed
+    pr.disable()
+    pr.dump_stats("profile_results.prof")
