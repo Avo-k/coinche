@@ -1,17 +1,42 @@
+import copy
 import cProfile
 import io
 import math
 import pstats
 import random
-import copy
+import sys
+import time
 from functools import lru_cache
 from itertools import chain
+
 from tqdm import trange
-import sys
 
 # BELOTE_REBELOTE = {0: (5, 6), 1: (13, 14), 2: (21, 22), 3: (29, 30)}
 BELOTE_REBELOTE = {t: (t * 8 + 5, t * 8 + 6) for t in range(4)}
 SUITS = "♠♥♦♣"
+
+
+def card_sorting_value(card, trump_suit):
+    trump_order = [0, 1, 6, 4, 7, 2, 3, 5]
+    non_trump_order = [0, 1, 2, 6, 3, 4, 5, 7]
+    suit = card // 8
+    rank = card % 8
+    if suit == trump_suit:
+        return trump_order[rank] + 100 * suit
+    else:
+        return non_trump_order[rank] + 100 * suit
+
+
+def sort_cards(cards, trump_suit):
+    return sorted(cards, key=lambda card: card_sorting_value(card, trump_suit))
+
+
+@lru_cache(maxsize=None)
+def get_ranks(trump, lead):
+    ranks = [c + 10 ** (c % 8) for c in range(32)]
+    ranks[8 * lead : 8 * lead + 8] = [0, 1, 2, 6, 3, 4, 5, 7]
+    ranks[8 * trump : 8 * trump + 8] = [8, 9, 14, 12, 15, 10, 11, 13]
+    return ranks
 
 
 def get_empty_info_dict():
@@ -708,9 +733,11 @@ class OracleAgent(Agent):
 
 
 class DuckAgent(OracleAgent):
-    def __init__(self, name="Duck", iterations=10_000, verbose=False):
+    def __init__(self, name, player_index, thinking_time=3, iterations=100_000, verbose=False):
         super().__init__(name=name, iterations=iterations, verbose=verbose)
         self.best_bids = []
+        self.player_index = player_index
+        self.thinking_time = thinking_time
 
     def play(self, root_state: GameState):
 
@@ -722,8 +749,12 @@ class DuckAgent(OracleAgent):
             return legal_actions[0]
 
         root_node = Node(None, parent=None)
+        starting_time = time.perf_counter()
 
         for _ in range(self.iterations):
+
+            if time.perf_counter() - starting_time > self.thinking_time:
+                break
 
             node = root_node
 
@@ -832,8 +863,7 @@ class DuckAgent(OracleAgent):
     def bid(self, hand, current_lead, bids):
 
         if not self.best_bids:
-            player_idx = (current_lead + len(bids)) % 4
-            self.player_index = player_idx
+            # self.player_index = (current_lead + len(bids)) % 4
 
             scores_for_each_trumps = []
 
