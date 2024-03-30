@@ -1,0 +1,359 @@
+Jean:  7♠  8♥  9♥  Q♥  7♦  A♦ 10♣  J♣
+Ivan:  9♠  K♠  A♠  J♥  A♥  9♦  7♣  Q♣
+Jule:  8♠  J♠  Q♠ 10♦  J♦  Q♦  8♣  K♣
+Eloi: 10♠  7♥ 10♥  K♥  8♦  K♦  9♣  A♣
+Eloi thinking about announcing ♠
+Eloi: 100_000 iterations
+	  A♣ Node(visits= 32464, relative_value= 0.44, predicted_score=72)
+	 10♠ Node(visits= 16324, relative_value= 0.43, predicted_score=70)
+	  8♦ Node(visits= 10785, relative_value= 0.42, predicted_score=69)
+	  K♥ Node(visits=  9613, relative_value= 0.42, predicted_score=68)
+	  K♦ Node(visits=  9290, relative_value= 0.42, predicted_score=68)
+	 10♥ Node(visits=  8781, relative_value= 0.42, predicted_score=68)
+	  7♥ Node(visits=  8181, relative_value= 0.42, predicted_score=68)
+	  9♣ Node(visits=  4562, relative_value= 0.40, predicted_score=65)
+Eloi thinking about announcing ♥
+Eloi: 100_000 iterations
+	  A♣ Node(visits= 29506, relative_value= 0.54, predicted_score=87)
+	  8♦ Node(visits= 19194, relative_value= 0.53, predicted_score=86)
+	  7♥ Node(visits= 12845, relative_value= 0.52, predicted_score=85)
+	  K♥ Node(visits= 12318, relative_value= 0.52, predicted_score=85)
+	  K♦ Node(visits=  9511, relative_value= 0.52, predicted_score=84)
+	 10♥ Node(visits=  6660, relative_value= 0.51, predicted_score=82)
+	  9♣ Node(visits=  6035, relative_value= 0.51, predicted_score=82)
+	 10♠ Node(visits=  3931, relative_value= 0.49, predicted_score=80)
+Eloi thinking about announcing ♦
+Eloi: 100_000 iterations
+	  A♣ Node(visits= 26799, relative_value= 0.48, predicted_score=77)
+	  7♥ Node(visits= 14936, relative_value= 0.47, predicted_score=76)
+	  K♦ Node(visits= 14515, relative_value= 0.47, predicted_score=76)
+	  K♥ Node(visits= 13889, relative_value= 0.47, predicted_score=76)
+	  8♦ Node(visits= 12135, relative_value= 0.47, predicted_score=75)
+	 10♥ Node(visits=  7749, relative_value= 0.46, predicted_score=74)
+	 10♠ Node(visits=  5571, relative_value= 0.45, predicted_score=72)
+	  9♣ Node(visits=  4406, relative_value= 0.44, predicted_score=71)
+Eloi thinking about announcing ♣
+Eloi: 100_000 iterations
+	  7♥ Node(visits= 21399, relative_value= 0.54, predicted_score=87)
+	  8♦ Node(visits= 21196, relative_value= 0.54, predicted_score=87)
+	  K♥ Node(visits= 13423, relative_value= 0.53, predicted_score=86)
+	 10♥ Node(visits= 12637, relative_value= 0.53, predicted_score=86)
+	  K♦ Node(visits=  9969, relative_value= 0.53, predicted_score=85)
+	  A♣ Node(visits=  9789, relative_value= 0.53, predicted_score=85)
+	  9♣ Node(visits=  6282, relative_value= 0.51, predicted_score=83)
+	 10♠ Node(visits=  5305, relative_value= 0.51, predicted_score=82)
+Eloi: best I can do is ['72♠', '87♥', '77♦', '87♣']
+Eloi bids 80 ♥
+Jean thinking about announcing ♠
+Jean: 100_000 iterations
+	  A♦ Node(visits= 32375, relative_value= 0.43, predicted_score=70)
+	  Q♥ Node(visits= 13071, relative_value= 0.42, predicted_score=67)
+	  8♥ Node(visits= 12586, relative_value= 0.42, predicted_score=67)
+	  9♥ Node(visits= 10966, relative_value= 0.41, predicted_score=67)
+	  7♠ Node(visits= 10498, relative_value= 0.41, predicted_score=67)
+	  J♣ Node(visits=  8211, relative_value= 0.41, predicted_score=66)
+	 10♣ Node(visits=  8143, relative_value= 0.41, predicted_score=66)
+	  7♦ Node(visits=  4150, relative_value= 0.39, predicted_score=63)
+Jean thinking about announcing ♥
+Jean: 100_000 iterations
+	  8♥ Node(visits= 39857, relative_value= 0.59, predicted_score=96)
+	  Q♥ Node(visits= 24874, relative_value= 0.59, predicted_score=95)
+	  A♦ Node(visits= 11503, relative_value= 0.58, predicted_score=93)
+	  J♣ Node(visits=  7416, relative_value= 0.57, predicted_score=92)
+	  7♦ Node(visits=  5277, relative_value= 0.56, predicted_score=90)
+	  7♠ Node(visits=  4985, relative_value= 0.55, predicted_score=90)
+	 10♣ Node(visits=  4596, relative_value= 0.55, predicted_score=89)
+	  9♥ Node(visits=  1492, relative_value= 0.50, predicted_score=81)
+Jean thinking about announcing ♦
+Jean: 100_000 iterations
+	  8♥ Node(visits= 17458, relative_value= 0.43, predicted_score=69)
+	  9♥ Node(visits= 16242, relative_value= 0.43, predicted_score=69)
+	  Q♥ Node(visits= 15776, relative_value= 0.43, predicted_score=69)
+	  7♦ Node(visits= 14164, relative_value= 0.42, predicted_score=69)
+	  7♠ Node(visits= 13726, relative_value= 0.42, predicted_score=69)
+	  J♣ Node(visits= 11474, relative_value= 0.42, predicted_score=68)
+	 10♣ Node(visits=  8370, relative_value= 0.41, predicted_score=67)
+	  A♦ Node(visits=  2790, relative_value= 0.38, predicted_score=61)
+Jean thinking about announcing ♣
+Jean: 100_000 iterations
+	  A♦ Node(visits= 27208, relative_value= 0.62, predicted_score=100)
+	  9♥ Node(visits= 20560, relative_value= 0.61, predicted_score=99)
+	  8♥ Node(visits= 16750, relative_value= 0.61, predicted_score=99)
+	  Q♥ Node(visits= 13967, relative_value= 0.61, predicted_score=98)
+	  7♠ Node(visits=  9042, relative_value= 0.60, predicted_score=97)
+	  7♦ Node(visits=  6975, relative_value= 0.59, predicted_score=96)
+	  J♣ Node(visits=  3889, relative_value= 0.57, predicted_score=93)
+	 10♣ Node(visits=  1609, relative_value= 0.53, predicted_score=87)
+Jean: best I can do is ['70♠', '96♥', '69♦', '100♣']
+Jean bids 100 ♣
+Ivan thinking about announcing ♠
+Ivan: 100_000 iterations
+	  K♠ Node(visits= 31367, relative_value= 0.61, predicted_score=100)
+	  A♥ Node(visits= 18923, relative_value= 0.61, predicted_score=98)
+	  7♣ Node(visits= 14387, relative_value= 0.60, predicted_score=98)
+	  Q♣ Node(visits= 11205, relative_value= 0.60, predicted_score=97)
+	  9♦ Node(visits=  8066, relative_value= 0.59, predicted_score=96)
+	  J♥ Node(visits=  6220, relative_value= 0.58, predicted_score=95)
+	  A♠ Node(visits=  5614, relative_value= 0.58, predicted_score=94)
+	  9♠ Node(visits=  4218, relative_value= 0.57, predicted_score=93)
+Ivan thinking about announcing ♥
+Ivan: 100_000 iterations
+	  A♠ Node(visits= 41589, relative_value= 0.64, predicted_score=104)
+	  7♣ Node(visits= 14929, relative_value= 0.63, predicted_score=101)
+	  Q♣ Node(visits= 12796, relative_value= 0.62, predicted_score=101)
+	  9♠ Node(visits=  8971, relative_value= 0.62, predicted_score=100)
+	  9♦ Node(visits=  8515, relative_value= 0.61, predicted_score=100)
+	  K♠ Node(visits=  7120, relative_value= 0.61, predicted_score=99)
+	  J♥ Node(visits=  4711, relative_value= 0.60, predicted_score=97)
+	  A♥ Node(visits=  1369, relative_value= 0.54, predicted_score=88)
+Ivan thinking about announcing ♦
+Ivan: 100_000 iterations
+	  A♠ Node(visits= 47409, relative_value= 0.50, predicted_score=82)
+	  A♥ Node(visits= 18413, relative_value= 0.49, predicted_score=80)
+	  7♣ Node(visits=  9875, relative_value= 0.48, predicted_score=78)
+	  Q♣ Node(visits=  7096, relative_value= 0.47, predicted_score=76)
+	  9♠ Node(visits=  5574, relative_value= 0.47, predicted_score=75)
+	  K♠ Node(visits=  4967, relative_value= 0.46, predicted_score=75)
+	  J♥ Node(visits=  4188, relative_value= 0.46, predicted_score=74)
+	  9♦ Node(visits=  2478, relative_value= 0.44, predicted_score=71)
+Ivan thinking about announcing ♣
+Ivan: 100_000 iterations
+	  A♠ Node(visits= 37887, relative_value= 0.48, predicted_score=78)
+	  A♥ Node(visits= 16887, relative_value= 0.47, predicted_score=76)
+	  7♣ Node(visits= 12680, relative_value= 0.46, predicted_score=75)
+	  9♦ Node(visits= 10491, relative_value= 0.46, predicted_score=74)
+	  Q♣ Node(visits=  7643, relative_value= 0.45, predicted_score=73)
+	  K♠ Node(visits=  5082, relative_value= 0.44, predicted_score=71)
+	  9♠ Node(visits=  4770, relative_value= 0.44, predicted_score=71)
+	  J♥ Node(visits=  4560, relative_value= 0.44, predicted_score=71)
+Ivan: best I can do is ['100♠', '104♥', '82♦', '78♣']
+Ivan passes
+Jule thinking about announcing ♠
+Jule: 100_000 iterations
+	  8♣ Node(visits= 18974, relative_value= 0.61, predicted_score=99)
+	  Q♦ Node(visits= 18715, relative_value= 0.61, predicted_score=99)
+	  J♦ Node(visits= 17744, relative_value= 0.61, predicted_score=99)
+	  J♠ Node(visits= 14665, relative_value= 0.61, predicted_score=98)
+	 10♦ Node(visits= 11710, relative_value= 0.60, predicted_score=98)
+	  K♣ Node(visits= 10426, relative_value= 0.60, predicted_score=97)
+	  8♠ Node(visits=  4110, relative_value= 0.57, predicted_score=93)
+	  Q♠ Node(visits=  3656, relative_value= 0.57, predicted_score=92)
+Jule thinking about announcing ♥
+Jule: 100_000 iterations
+	  J♠ Node(visits= 17176, relative_value= 0.37, predicted_score=59)
+	  Q♠ Node(visits= 13304, relative_value= 0.36, predicted_score=58)
+	  8♠ Node(visits= 12713, relative_value= 0.36, predicted_score=58)
+	 10♦ Node(visits= 11966, relative_value= 0.36, predicted_score=58)
+	  Q♦ Node(visits= 11581, relative_value= 0.36, predicted_score=58)
+	  8♣ Node(visits= 11570, relative_value= 0.36, predicted_score=58)
+	  K♣ Node(visits= 11454, relative_value= 0.36, predicted_score=58)
+	  J♦ Node(visits= 10236, relative_value= 0.36, predicted_score=58)
+Jule thinking about announcing ♦
+Jule: 100_000 iterations
+	  8♠ Node(visits= 21365, relative_value= 0.61, predicted_score=99)
+	  8♣ Node(visits= 18393, relative_value= 0.61, predicted_score=99)
+	  J♠ Node(visits= 17649, relative_value= 0.61, predicted_score=99)
+	  Q♠ Node(visits= 17598, relative_value= 0.61, predicted_score=99)
+	  K♣ Node(visits= 11006, relative_value= 0.60, predicted_score=97)
+	  J♦ Node(visits=  7534, relative_value= 0.59, predicted_score=96)
+	  Q♦ Node(visits=  4011, relative_value= 0.57, predicted_score=93)
+	 10♦ Node(visits=  2444, relative_value= 0.55, predicted_score=90)
+Jule thinking about announcing ♣
+Jule: 100_000 iterations
+	  8♠ Node(visits= 16961, relative_value= 0.41, predicted_score=67)
+	  Q♠ Node(visits= 15836, relative_value= 0.41, predicted_score=67)
+	  J♠ Node(visits= 15113, relative_value= 0.41, predicted_score=66)
+	  Q♦ Node(visits= 14575, relative_value= 0.41, predicted_score=66)
+	  J♦ Node(visits= 13910, relative_value= 0.41, predicted_score=66)
+	 10♦ Node(visits= 10395, relative_value= 0.40, predicted_score=65)
+	  8♣ Node(visits=  7329, relative_value= 0.39, predicted_score=64)
+	  K♣ Node(visits=  5881, relative_value= 0.39, predicted_score=63)
+Jule: best I can do is ['99♠', '59♥', '99♦', '67♣']
+Jule passes
+Eloi passes
+Eloi: 100_000 iterations
+	  7♥ Node(visits= 41457, relative_value= 1.21, predicted_score=196)
+	  8♦ Node(visits= 18534, relative_value= 1.20, predicted_score=194)
+	  K♥ Node(visits= 13508, relative_value= 1.19, predicted_score=193)
+	 10♥ Node(visits= 10497, relative_value= 1.19, predicted_score=192)
+	  K♦ Node(visits=  8633, relative_value= 1.18, predicted_score=191)
+	  A♣ Node(visits=  3346, relative_value= 1.15, predicted_score=187)
+	 10♠ Node(visits=  2337, relative_value= 1.14, predicted_score=184)
+	  9♣ Node(visits=  1688, relative_value= 1.12, predicted_score=182)
+ 7♥ played by Eloi. Current trick is [' 7♥']
+------------------------------
+Jean: 100_000 iterations
+	  Q♥ Node(visits= 35400, relative_value= 0.74, predicted_score=119)
+	  9♥ Node(visits= 32782, relative_value= 0.74, predicted_score=119)
+	  8♥ Node(visits= 31818, relative_value= 0.73, predicted_score=119)
+ Q♥ played by Jean. Current trick is [' 7♥', ' Q♥']
+------------------------------
+Ivan: 100_000 iterations
+	  A♥ Node(visits= 98676, relative_value= 1.06, predicted_score=172)
+	  J♥ Node(visits=  1324, relative_value= 0.95, predicted_score=154)
+ A♥ played by Ivan. Current trick is [' 7♥', ' Q♥', ' A♥']
+------------------------------
+Jule: 100_000 iterations
+	  K♣ Node(visits= 65265, relative_value= 0.28, predicted_score=46)
+	  8♣ Node(visits= 34735, relative_value= 0.28, predicted_score=45)
+ K♣ played by Jule. Current trick is [' 7♥', ' Q♥', ' A♥', ' K♣']
+------------------------------
+[18, 0]
+------------------------------
+Jule: 100_000 iterations
+	  8♣ Node(visits= 19830, relative_value= 0.29, predicted_score=47)
+	  Q♦ Node(visits= 19750, relative_value= 0.29, predicted_score=47)
+	  J♦ Node(visits= 14762, relative_value= 0.28, predicted_score=46)
+	  J♠ Node(visits= 14539, relative_value= 0.28, predicted_score=46)
+	  Q♠ Node(visits= 13195, relative_value= 0.28, predicted_score=45)
+	  8♠ Node(visits= 11055, relative_value= 0.28, predicted_score=45)
+	 10♦ Node(visits=  6869, relative_value= 0.27, predicted_score=43)
+ 8♣ played by Jule. Current trick is [' 8♣']
+------------------------------
+Eloi: 100_000 iterations
+	  A♣ Node(visits= 61342, relative_value= 1.04, predicted_score=169)
+	  9♣ Node(visits= 38658, relative_value= 1.04, predicted_score=168)
+ A♣ played by Eloi. Current trick is [' 8♣', ' A♣']
+------------------------------
+Jean: only legal card  J♣ was played
+ J♣ played by Jean. Current trick is [' 8♣', ' A♣', ' J♣']
+------------------------------
+Ivan: 100_000 iterations
+	  7♣ Node(visits= 71049, relative_value= 0.69, predicted_score=113)
+	  Q♣ Node(visits= 28951, relative_value= 0.69, predicted_score=111)
+ 7♣ played by Ivan. Current trick is [' 8♣', ' A♣', ' J♣', ' 7♣']
+------------------------------
+[49, 0]
+------------------------------
+Jean: 100_000 iterations
+	  A♦ Node(visits= 66072, relative_value= 0.99, predicted_score=161)
+	  8♥ Node(visits= 17853, relative_value= 0.98, predicted_score=158)
+	  9♥ Node(visits= 11053, relative_value= 0.97, predicted_score=157)
+	  7♠ Node(visits=  3425, relative_value= 0.93, predicted_score=151)
+	  7♦ Node(visits=  1334, relative_value= 0.89, predicted_score=144)
+	 10♣ Node(visits=   263, relative_value= 0.74, predicted_score=119)
+ A♦ played by Jean. Current trick is [' A♦']
+------------------------------
+Ivan: only legal card  9♦ was played
+ 9♦ played by Ivan. Current trick is [' A♦', ' 9♦']
+------------------------------
+Jule: 100_000 iterations
+	  Q♦ Node(visits= 70119, relative_value= 0.63, predicted_score=101)
+	  J♦ Node(visits= 15919, relative_value= 0.61, predicted_score=98)
+	 10♦ Node(visits= 13962, relative_value= 0.60, predicted_score=98)
+ Q♦ played by Jule. Current trick is [' A♦', ' 9♦', ' Q♦']
+------------------------------
+Eloi: 100_000 iterations
+	  8♦ Node(visits= 81558, relative_value= 0.69, predicted_score=112)
+	  K♦ Node(visits= 18442, relative_value= 0.68, predicted_score=109)
+ 8♦ played by Eloi. Current trick is [' A♦', ' 9♦', ' Q♦', ' 8♦']
+------------------------------
+[63, 0]
+------------------------------
+Jean: 100_000 iterations
+	  8♥ Node(visits= 36744, relative_value= 1.00, predicted_score=162)
+	  9♥ Node(visits= 28904, relative_value= 1.00, predicted_score=162)
+	  7♦ Node(visits= 18114, relative_value= 0.99, predicted_score=160)
+	  7♠ Node(visits= 15982, relative_value= 0.99, predicted_score=160)
+	 10♣ Node(visits=   256, relative_value= 0.75, predicted_score=121)
+ 8♥ played by Jean. Current trick is [' 8♥']
+------------------------------
+Ivan: only legal card  J♥ was played
+ J♥ played by Ivan. Current trick is [' 8♥', ' J♥']
+------------------------------
+Jule: 100_000 iterations
+	  8♠ Node(visits= 53525, relative_value= 0.54, predicted_score=88)
+	  J♦ Node(visits= 23586, relative_value= 0.53, predicted_score=86)
+	  J♠ Node(visits= 12286, relative_value= 0.52, predicted_score=84)
+	  Q♠ Node(visits=  9860, relative_value= 0.52, predicted_score=84)
+	 10♦ Node(visits=   743, relative_value= 0.40, predicted_score=65)
+ 8♠ played by Jule. Current trick is [' 8♥', ' J♥', ' 8♠']
+------------------------------
+Eloi: 100_000 iterations
+	 10♥ Node(visits= 74128, relative_value= 1.01, predicted_score=163)
+	  K♥ Node(visits= 25872, relative_value= 1.00, predicted_score=161)
+10♥ played by Eloi. Current trick is [' 8♥', ' J♥', ' 8♠', '10♥']
+------------------------------
+[63, 12]
+------------------------------
+Eloi: 100_000 iterations
+	  9♣ Node(visits= 91958, relative_value= 1.00, predicted_score=163)
+	  K♦ Node(visits=  4590, relative_value= 0.95, predicted_score=155)
+	  K♥ Node(visits=  2355, relative_value= 0.93, predicted_score=150)
+	 10♠ Node(visits=  1097, relative_value= 0.89, predicted_score=143)
+ 9♣ played by Eloi. Current trick is [' 9♣']
+------------------------------
+Jean: only legal card 10♣ was played
+10♣ played by Jean. Current trick is [' 9♣', '10♣']
+------------------------------
+Ivan: only legal card  Q♣ was played
+ Q♣ played by Ivan. Current trick is [' 9♣', '10♣', ' Q♣']
+------------------------------
+Jule: 100_000 iterations
+	  J♠ Node(visits= 55556, relative_value= 0.47, predicted_score=75)
+	  Q♠ Node(visits= 30872, relative_value= 0.46, predicted_score=74)
+	  J♦ Node(visits= 13347, relative_value= 0.45, predicted_score=72)
+	 10♦ Node(visits=   225, relative_value= 0.19, predicted_score=31)
+ J♠ played by Jule. Current trick is [' 9♣', '10♣', ' Q♣', ' J♠']
+------------------------------
+[63, 41]
+------------------------------
+Eloi: 100_000 iterations
+	  K♥ Node(visits= 59935, relative_value= 0.97, predicted_score=158)
+	  K♦ Node(visits= 28534, relative_value= 0.96, predicted_score=156)
+	 10♠ Node(visits= 11531, relative_value= 0.95, predicted_score=154)
+ K♥ played by Eloi. Current trick is [' K♥']
+------------------------------
+Jean: only legal card  9♥ was played
+ 9♥ played by Jean. Current trick is [' K♥', ' 9♥']
+------------------------------
+Ivan: 100_000 iterations
+	  9♠ Node(visits= 99577, relative_value= 1.54, predicted_score=249)
+	  K♠ Node(visits=   270, relative_value= 1.29, predicted_score=208)
+	  A♠ Node(visits=   153, relative_value= 1.20, predicted_score=194)
+ 9♠ played by Ivan. Current trick is [' K♥', ' 9♥', ' 9♠']
+------------------------------
+Jule: 100_000 iterations
+	  Q♠ Node(visits= 97847, relative_value= 0.47, predicted_score=76)
+	  J♦ Node(visits=  1812, relative_value= 0.38, predicted_score=61)
+	 10♦ Node(visits=   341, relative_value= 0.24, predicted_score=39)
+ Q♠ played by Jule. Current trick is [' K♥', ' 9♥', ' 9♠', ' Q♠']
+------------------------------
+[63, 48]
+------------------------------
+Eloi: 100_000 iterations
+	 10♠ Node(visits= 85321, relative_value= 0.92, predicted_score=148)
+	  K♦ Node(visits= 14679, relative_value= 0.89, predicted_score=145)
+10♠ played by Eloi. Current trick is ['10♠']
+------------------------------
+Jean: only legal card  7♠ was played
+ 7♠ played by Jean. Current trick is ['10♠', ' 7♠']
+------------------------------
+Ivan: 100_000 iterations
+	  A♠ Node(visits= 99907, relative_value= 1.60, predicted_score=260)
+	  K♠ Node(visits=    93, relative_value= 1.16, predicted_score=188)
+ A♠ played by Ivan. Current trick is ['10♠', ' 7♠', ' A♠']
+------------------------------
+Jule: 100_000 iterations
+	 10♦ Node(visits= 50000, relative_value= 0.00, predicted_score=0)
+	  J♦ Node(visits= 50000, relative_value= 0.00, predicted_score=0)
+10♦ played by Jule. Current trick is ['10♠', ' 7♠', ' A♠', '10♦']
+------------------------------
+[63, 79]
+------------------------------
+Ivan: only legal card  K♠ was played
+ K♠ played by Ivan. Current trick is [' K♠']
+------------------------------
+Jule: only legal card  J♦ was played
+ J♦ played by Jule. Current trick is [' K♠', ' J♦']
+------------------------------
+Eloi: only legal card  K♦ was played
+ K♦ played by Eloi. Current trick is [' K♠', ' J♦', ' K♦']
+------------------------------
+Jean: only legal card  7♦ was played
+ 7♦ played by Jean. Current trick is [' K♠', ' J♦', ' K♦', ' 7♦']
+------------------------------
+[0, 260]
+------------------------------
+[0, 260]
+[0, 260]

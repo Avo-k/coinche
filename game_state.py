@@ -113,14 +113,15 @@ class GameState:
     @classmethod
     def fresh_game(
         cls,
-        players: list[str] = ["North", "East", "South", "West"],
+        names: list[str] = ["North", "East", "South", "West"],
         hands: list[list[int]] = None,
         current_lead: int = None,  # 0 to 3
+        do_bidding_phase=True,
         seed=None,
         verbose=False,
     ):
 
-        assert len(players) == 4, "There must be 4 players"
+        assert len(names) == 4, "There must be 4 players"
 
         if seed is not None:
             random.seed(seed)
@@ -134,11 +135,29 @@ class GameState:
             hands = [deck[i * 8 : i * 8 + 8] for i in range(4)]
 
         if verbose:
-            for p, h in zip(players, hands):
-                print(f"{p.name}: {pprint_trick(list(sorted(h)))}")
+            for p, h in zip(names, hands):
+                print(f"{p}: {pprint_trick(list(sorted(h)))}")
+
+        if not do_bidding_phase:
+            return cls(
+                names=names,
+                bids=[],
+                bet_value=0,
+                betting_team=0,
+                trump=0,
+                coinche=1,
+                hands=hands,
+                tricks=[],
+                leads=[],
+                current_trick=[],
+                current_lead=current_lead,
+                last_card_played=-1,
+                scores=[0, 0],
+                info=get_empty_info_dict(),
+            )
 
         bids = bidding_phase(
-            players,
+            names,
             current_lead,
             hands.copy(),
             verbose=verbose,
@@ -147,7 +166,7 @@ class GameState:
         betting_team = betting_team % 2
 
         return cls(
-            names=[player.name for player in players],
+            names=names,
             bids=bids,
             bet_value=bet_value,
             betting_team=betting_team,
@@ -486,7 +505,7 @@ class HumanAgent(Agent):
 
         return card
 
-    def bid(self, hand, bids):
+    def bid(self, hand, current_lead, bids):
         print(f"It's {self.name}'s turn")
         print("Choose a bid")
         value = input("Value: ")
@@ -812,7 +831,7 @@ class DuckAgent(OracleAgent):
 
     def bid(self, hand, current_lead, bids):
 
-        if not self.predicted_scores:
+        if not self.best_bids:
             player_idx = (current_lead + len(bids)) % 4
             self.player_index = player_idx
 
@@ -894,6 +913,9 @@ def bidding_phase(players, current_lead, hands, verbose):
             else:
                 print(f"{players[player].name} passes")
 
+    if verbose:
+        print(f"Contract is {best_bid} {SUITS[trump]}")
+
     return bids[:-3]
 
 
@@ -918,7 +940,7 @@ def main():
 
         # print(i)
         game_state = GameState.fresh_game(
-            players=players,
+            names=[p.name for p in players],
             # hands=[[*range(i, i + 8)] for i in [0, 8, 16, 24]],
             # seed=i,
             verbose=True,
@@ -936,10 +958,10 @@ def main():
 
 if __name__ == "__main__":
 
-    with open("last_game_played.txt", "w", encoding="utf-8") as f:
-        sys.stdout = f
+    # with open("last_game_played.txt", "w", encoding="utf-8") as f:
+    #     sys.stdout = f
 
-        main()
+    main()
 
     # # PROFILE
     # pr = cProfile.Profile()
