@@ -163,8 +163,8 @@ thinking_time = 5
 players = [
     DuckAgent(name="North", player_index=0, thinking_time=thinking_time, iterations=n_iter, verbose=True),
     DuckAgent(name="East", player_index=1, thinking_time=thinking_time, iterations=n_iter, verbose=True),
-    # DuckAgent(name="South", player_index=2, thinking_time=thinking_time, iterations=n_iter, verbose=True),
-    HumanGuiAgent(name="South", player_index=2),
+    DuckAgent(name="South", player_index=2, thinking_time=thinking_time, iterations=n_iter, verbose=True),
+    # HumanGuiAgent(name="South", player_index=2),
     DuckAgent(name="West", player_index=3, thinking_time=thinking_time, iterations=n_iter, verbose=True),
 ]
 
@@ -180,7 +180,7 @@ while running and len(game_state.tricks) < 8:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONUP:
-            if next_player.name == "South":
+            if isinstance(next_player, HumanGuiAgent):
                 mouse_pos = pygame.mouse.get_pos()
                 legal_cards = sort_cards(game_state.get_legal_actions(), game_state.trump)
                 for card in legal_cards[::-1]:  # sorted than reversed for overlaping
@@ -195,7 +195,7 @@ while running and len(game_state.tricks) < 8:
                 print(f"{next_player.name}'s turn")
                 just_played = True
 
-    if next_player.name != "South" and not just_played:
+    if not isinstance(next_player, HumanGuiAgent) and not just_played:
         card = next_player.play(game_state)
         play_one_card(card, game_state, verbose=True)
         next_player = players[game_state.get_current_player()]

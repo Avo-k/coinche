@@ -1,0 +1,229 @@
+Jean: 10♠  K♠  9♥ 10♦  J♦  A♦ 10♣  A♣
+Ivan:  7♠  9♠  J♠  Q♠  K♥  7♦  7♣  9♣
+Jule:  8♠  7♥ 10♥  A♥  9♦  Q♦  K♦  Q♣
+Eloi:  A♠  8♥  J♥  Q♥  8♦  8♣  J♣  K♣
+Jule considering ♠      target: 80 bonus: 0
+Jule considering ♥      target: 80 bonus: 0
+Jule considering ♦      target: 80 bonus: 0
+Jule considering ♣      target: 80 bonus: 0
+Jule: best I can do is ['0♠', '22♥', '102♦', '0♣']
+Jule bids 80 ♦
+Eloi considering ♠      target: 90 bonus: 0
+Eloi considering ♥      target: 90 bonus: 0
+Eloi considering ♦      target: 90 bonus: -48
+Eloi considering ♣      target: 90 bonus: 0
+Eloi: best I can do is ['0♠', '65♥', '0♦', '64♣']
+Eloi passes
+Jean considering ♠      target: 90 bonus: 0
+Jean considering ♥      target: 90 bonus: 0
+Jean considering ♦      target: 90 bonus: 48
+Jean considering ♣      target: 90 bonus: 0
+Jean: best I can do is ['9♠', '10♥', '158♦', '9♣']
+Jean bids 100 ♦
+Ivan considering ♠      target: 110 bonus: 0
+Ivan considering ♥      target: 110 bonus: 0
+Ivan considering ♦      target: 110 bonus: -60
+Ivan considering ♣      target: 110 bonus: 0
+Ivan: best I can do is ['51♠', '0♥', '0♦', '0♣']
+Ivan passes
+Jule considering ♦      target: 110 bonus: 60
+Jule: best I can do is ['0♠', '0♥', '109♦', '0♣']
+Jule passes
+Eloi: best I can do is ['0♠', '0♥', '0♦', '0♣']
+Eloi passes
+Jean is playing for 100♦
+Jule: 31_933 iterations
+          Q♦ Node(visits= 14954, relative_value= 1.08, predicted_score=174)
+          K♦ Node(visits=  8815, relative_value= 1.07, predicted_score=173)
+         10♥ Node(visits=  2985, relative_value= 1.03, predicted_score=168)
+          7♥ Node(visits=  1959, relative_value= 1.02, predicted_score=165)
+          A♥ Node(visits=  1822, relative_value= 1.01, predicted_score=164)
+          Q♣ Node(visits=   657, relative_value= 0.95, predicted_score=154)
+          8♠ Node(visits=   545, relative_value= 0.93, predicted_score=151)
+          9♦ Node(visits=   195, relative_value= 0.81, predicted_score=132)
+ Q♦ played by Jule. Current trick is [' Q♦']
+------------------------------
+Eloi: only legal card  8♦ was played
+ 8♦ played by Eloi. Current trick is [' Q♦', ' 8♦']
+------------------------------
+Jean: 28_149 iterations
+         10♦ Node(visits= 11544, relative_value= 1.26, predicted_score=204)
+          J♦ Node(visits=  8943, relative_value= 1.25, predicted_score=203)
+          A♦ Node(visits=  7661, relative_value= 1.25, predicted_score=202)
+10♦ played by Jean. Current trick is [' Q♦', ' 8♦', '10♦']
+------------------------------
+Ivan: only legal card  7♦ was played
+ 7♦ played by Ivan. Current trick is [' Q♦', ' 8♦', '10♦', ' 7♦']
+------------------------------
+[13, 0]
+------------------------------
+Jean: 32_062 iterations
+          J♦ Node(visits= 24746, relative_value= 1.40, predicted_score=227)
+          K♠ Node(visits=  2094, relative_value= 1.34, predicted_score=217)
+         10♠ Node(visits=  1460, relative_value= 1.32, predicted_score=214)
+          9♥ Node(visits=  1436, relative_value= 1.32, predicted_score=214)
+         10♣ Node(visits=  1194, relative_value= 1.31, predicted_score=212)
+          A♣ Node(visits=   881, relative_value= 1.29, predicted_score=209)
+          A♦ Node(visits=   250, relative_value= 1.16, predicted_score=189)
+ J♦ played by Jean. Current trick is [' J♦']
+------------------------------
+Ivan: 39_165 iterations
+          9♣ Node(visits=  9348, relative_value= 0.35, predicted_score=57)
+          7♣ Node(visits=  7392, relative_value= 0.35, predicted_score=57)
+          7♠ Node(visits=  6749, relative_value= 0.35, predicted_score=56)
+          9♠ Node(visits=  6018, relative_value= 0.34, predicted_score=55)
+          J♠ Node(visits=  4215, relative_value= 0.33, predicted_score=54)
+          Q♠ Node(visits=  3200, relative_value= 0.32, predicted_score=52)
+          K♥ Node(visits=  2242, relative_value= 0.31, predicted_score=50)
+ 9♣ played by Ivan. Current trick is [' J♦', ' 9♣']
+------------------------------
+Jule: 32_671 iterations
+          K♦ Node(visits= 18845, relative_value= 1.55, predicted_score=251)
+          9♦ Node(visits= 13825, relative_value= 1.54, predicted_score=250)
+ K♦ played by Jule. Current trick is [' J♦', ' 9♣', ' K♦']
+------------------------------
+Eloi: 33_138 iterations
+          8♣ Node(visits=  6500, relative_value= 0.22, predicted_score=36)
+          8♥ Node(visits=  6026, relative_value= 0.22, predicted_score=36)
+          J♥ Node(visits=  5819, relative_value= 0.22, predicted_score=36)
+          J♣ Node(visits=  5211, relative_value= 0.22, predicted_score=35)
+          Q♥ Node(visits=  4448, relative_value= 0.21, predicted_score=35)
+          K♣ Node(visits=  4420, relative_value= 0.21, predicted_score=35)
+          A♠ Node(visits=   713, relative_value= 0.12, predicted_score=19)
+ 8♣ played by Eloi. Current trick is [' J♦', ' 9♣', ' K♦', ' 8♣']
+------------------------------
+[37, 0]
+------------------------------
+Jean: 40_018 iterations
+          A♣ Node(visits=  9174, relative_value= 1.60, predicted_score=259)
+          9♥ Node(visits=  8185, relative_value= 1.60, predicted_score=259)
+         10♣ Node(visits=  8049, relative_value= 1.60, predicted_score=259)
+          K♠ Node(visits=  8005, relative_value= 1.60, predicted_score=259)
+         10♠ Node(visits=  4989, relative_value= 1.58, predicted_score=257)
+          A♦ Node(visits=  1615, relative_value= 1.54, predicted_score=249)
+ A♣ played by Jean. Current trick is [' A♣']
+------------------------------
+Ivan: only legal card  7♣ was played
+ 7♣ played by Ivan. Current trick is [' A♣', ' 7♣']
+------------------------------
+Jule: only legal card  Q♣ was played
+ Q♣ played by Jule. Current trick is [' A♣', ' 7♣', ' Q♣']
+------------------------------
+Eloi: 39_980 iterations
+          J♣ Node(visits= 20203, relative_value= 0.17, predicted_score=28)
+          K♣ Node(visits= 19776, relative_value= 0.17, predicted_score=28)
+ J♣ played by Eloi. Current trick is [' A♣', ' 7♣', ' Q♣', ' J♣']
+------------------------------
+[53, 0]
+------------------------------
+Jean: 44_891 iterations
+         10♣ Node(visits= 16578, relative_value= 1.61, predicted_score=261)
+          K♠ Node(visits= 10567, relative_value= 1.60, predicted_score=259)
+          9♥ Node(visits=  9818, relative_value= 1.60, predicted_score=259)
+         10♠ Node(visits=  6515, relative_value= 1.59, predicted_score=257)
+          A♦ Node(visits=  1412, relative_value= 1.53, predicted_score=248)
+10♣ played by Jean. Current trick is ['10♣']
+------------------------------
+Ivan: 42_414 iterations
+          9♠ Node(visits=  9665, relative_value= 0.09, predicted_score=14)
+          7♠ Node(visits=  9573, relative_value= 0.09, predicted_score=14)
+          Q♠ Node(visits=  8911, relative_value= 0.08, predicted_score=14)
+          J♠ Node(visits=  8291, relative_value= 0.08, predicted_score=13)
+          K♥ Node(visits=  5973, relative_value= 0.07, predicted_score=12)
+ 9♠ played by Ivan. Current trick is ['10♣', ' 9♠']
+------------------------------
+Jule: 40_331 iterations
+          8♠ Node(visits= 23448, relative_value= 1.69, predicted_score=273)
+          7♥ Node(visits=  7418, relative_value= 1.67, predicted_score=270)
+          A♥ Node(visits=  3307, relative_value= 1.64, predicted_score=266)
+         10♥ Node(visits=  3149, relative_value= 1.64, predicted_score=266)
+          9♦ Node(visits=  3008, relative_value= 1.64, predicted_score=265)
+ 8♠ played by Jule. Current trick is ['10♣', ' 9♠', ' 8♠']
+------------------------------
+Eloi: only legal card  K♣ was played
+ K♣ played by Eloi. Current trick is ['10♣', ' 9♠', ' 8♠', ' K♣']
+------------------------------
+[67, 0]
+------------------------------
+Jean: 54_095 iterations
+          K♠ Node(visits= 23219, relative_value= 1.61, predicted_score=261)
+          9♥ Node(visits= 18896, relative_value= 1.61, predicted_score=260)
+         10♠ Node(visits= 10473, relative_value= 1.59, predicted_score=258)
+          A♦ Node(visits=  1506, relative_value= 1.53, predicted_score=247)
+ K♠ played by Jean. Current trick is [' K♠']
+------------------------------
+Ivan: 44_663 iterations
+          Q♠ Node(visits= 15523, relative_value= 0.11, predicted_score=17)
+          J♠ Node(visits= 15234, relative_value= 0.11, predicted_score=17)
+          7♠ Node(visits= 13905, relative_value= 0.11, predicted_score=17)
+ Q♠ played by Ivan. Current trick is [' K♠', ' Q♠']
+------------------------------
+Jule: 45_009 iterations
+          9♦ Node(visits= 29006, relative_value= 1.67, predicted_score=271)
+          7♥ Node(visits= 13213, relative_value= 1.66, predicted_score=269)
+         10♥ Node(visits=  1509, relative_value= 1.59, predicted_score=257)
+          A♥ Node(visits=  1280, relative_value= 1.58, predicted_score=256)
+ 9♦ played by Jule. Current trick is [' K♠', ' Q♠', ' 9♦']
+------------------------------
+Eloi: only legal card  A♠ was played
+ A♠ played by Eloi. Current trick is [' K♠', ' Q♠', ' 9♦', ' A♠']
+------------------------------
+[99, 0]
+------------------------------
+Jule: 51_538 iterations
+          A♥ Node(visits= 24317, relative_value= 1.70, predicted_score=276)
+         10♥ Node(visits= 22616, relative_value= 1.70, predicted_score=276)
+          7♥ Node(visits=  4604, relative_value= 1.67, predicted_score=270)
+ A♥ played by Jule. Current trick is [' A♥']
+------------------------------
+Eloi: 50_686 iterations
+          J♥ Node(visits= 17826, relative_value= 0.04, predicted_score=6)
+          8♥ Node(visits= 16803, relative_value= 0.03, predicted_score=6)
+          Q♥ Node(visits= 16056, relative_value= 0.03, predicted_score=6)
+ J♥ played by Eloi. Current trick is [' A♥', ' J♥']
+------------------------------
+Jean: only legal card  9♥ was played
+ 9♥ played by Jean. Current trick is [' A♥', ' J♥', ' 9♥']
+------------------------------
+Ivan: only legal card  K♥ was played
+ K♥ played by Ivan. Current trick is [' A♥', ' J♥', ' 9♥', ' K♥']
+------------------------------
+[116, 0]
+------------------------------
+Jule: 71_569 iterations
+         10♥ Node(visits= 69060, relative_value= 1.74, predicted_score=281)
+          7♥ Node(visits=  2508, relative_value= 1.67, predicted_score=270)
+10♥ played by Jule. Current trick is ['10♥']
+------------------------------
+Eloi: 64_865 iterations
+          8♥ Node(visits= 32475, relative_value= 0.00, predicted_score=0)
+          Q♥ Node(visits= 32389, relative_value= 0.00, predicted_score=0)
+ 8♥ played by Eloi. Current trick is ['10♥', ' 8♥']
+------------------------------
+Jean: 89_991 iterations
+         10♠ Node(visits= 44995, relative_value= 1.74, predicted_score=282)
+          A♦ Node(visits= 44995, relative_value= 1.74, predicted_score=282)
+10♠ played by Jean. Current trick is ['10♥', ' 8♥', '10♠']
+------------------------------
+Ivan: 87_586 iterations
+          J♠ Node(visits= 43793, relative_value= 0.00, predicted_score=0)
+          7♠ Node(visits= 43792, relative_value= 0.00, predicted_score=0)
+ J♠ played by Ivan. Current trick is ['10♥', ' 8♥', '10♠', ' J♠']
+------------------------------
+[138, 0]
+------------------------------
+Jule: only legal card  7♥ was played
+ 7♥ played by Jule. Current trick is [' 7♥']
+------------------------------
+Eloi: only legal card  Q♥ was played
+ Q♥ played by Eloi. Current trick is [' 7♥', ' Q♥']
+------------------------------
+Jean: only legal card  A♦ was played
+ A♦ played by Jean. Current trick is [' 7♥', ' Q♥', ' A♦']
+------------------------------
+Ivan: only legal card  7♠ was played
+ 7♠ played by Ivan. Current trick is [' 7♥', ' Q♥', ' A♦', ' 7♠']
+------------------------------
+[162, 0]
+[282, 0]
+------------------------------

@@ -139,12 +139,16 @@ class GameState:
     def fresh_game(
         cls,
         names: list[str] = ["North", "East", "South", "West"],
+        players=None,
         hands: list[list[int]] = None,
         current_lead: int = None,  # 0 to 3
         do_bidding_phase=True,
         seed=None,
         verbose=False,
     ):
+
+        if do_bidding_phase:
+            assert players is not None, "Players must be provided for bidding phase"
 
         assert len(names) == 4, "There must be 4 players"
 
@@ -182,7 +186,7 @@ class GameState:
             )
 
         bids = bidding_phase(
-            names,
+            players,
             current_lead,
             hands.copy(),
             verbose=verbose,
@@ -225,20 +229,30 @@ class GameState:
             info={"ruff": [p.copy() for p in self.info["ruff"]]},
         )
 
+    def partner_wins_for_now(self, trick, lead_player, player_index):
+        # check if player was playing in 1st or 2nd position
+        if lead_player == player_index or player_index == (lead_player + 1) % 4:
+            return False
+        # player was playing in 3rd or 4th position
+        ranks = get_ranks(self.trump, trick[lead_player] // 8)
+        return max(ranks[card] for card in trick) == ranks[trick[(player_index + 2) % 4]]
+
     def gather_informations(self):
         # update self.info with available informations
-
         for trick_idx, trick in enumerate(self.tricks):
             leading_suit = trick[self.leads[trick_idx]] // 8
-
             for player_idx, card in enumerate(trick):
-                self.info["ruff"][player_idx][leading_suit] = card // 8 != leading_suit
+                if card // 8 != leading_suit:  # ruff
+                    self.info["ruff"][player_idx][leading_suit] = True
+                    if card // 8 != self.trump and not self.partner_wins_for_now(
+                        trick, self.leads[trick_idx], player_idx
+                    ):  # doesn't play trump when they had to
+                        self.info["ruff"][player_idx][self.trump] = True
 
         if len(self.current_trick) > 1:
             leading_suit = self.current_trick[0] // 8
             for trick_idx, card in enumerate(self.current_trick):
                 self.info["ruff"][(self.current_lead + trick_idx) % 4][leading_suit] = card // 8 != leading_suit
-
         # TODO: add more information
 
     def get_unseen_cards(self, player_index: int):
@@ -420,7 +434,6 @@ def final_points(game_state: GameState):
     belote_reblote_team = get_belote_rebelote(game_state)
     if belote_reblote_team is not None:
         game_state.scores[belote_reblote_team] += 20
-    game_state.scores[game_state.current_lead % 2] += 10  # 10 de der
 
     # contrat rempli
     if game_state.scores[game_state.betting_team] >= game_state.bet_value:
@@ -443,6 +456,8 @@ def play_one_game(agents: list, game_state: GameState, verbose=False):
         play_one_card(card, game_state, verbose)
         if verbose and not game_state.current_trick:
             print(game_state.scores)
+            # game_state.gather_informations()
+            # print(game_state.info)
             print("-" * 30)
 
 
@@ -478,12 +493,19 @@ def play_one_card(card, game_state: GameState, verbose=False):
         game_state.current_trick = []
 
         if len(game_state.tricks) == 8:
+            game_state.scores[game_state.current_lead % 2] += 10  # 10 de der
+            assert (
+                sum(game_state.scores) == 162
+            ), f"problem with scores {game_state.scores}\n{pprint_tricks(game_state.tricks)}"
+            if verbose:
+                print(game_state.scores)
             final_points(game_state)
 
 
 class Agent:
-    def __init__(self, name="Agent"):
+    def __init__(self, name: str, player_index: int):
         self.name = name
+        self.player_index = player_index
 
     def play(self, game_state: GameState):
         raise NotImplementedError
@@ -493,22 +515,23 @@ class Agent:
 
 
 class RandomAgent(Agent):
-    def __init__(self, name="Randy"):
-        super().__init__(name=name)
+    def __init__(self, name, player_index):
+        super().__init__(name=name, player_index=player_index)
 
     def play(self, game_state: GameState):
         return random.choice(game_state.get_legal_actions())
 
-    def bid(self, hand, bids):
+    def bid(self, hand, current_lead, bids):
         if any(bid[1] is not None for bid in bids):
+            # best_bid = max(bids, key=lambda x: x[1])
             return None, None
         else:
-            return 80, random.randint(0, 3)
+            return random.randint(0, 3), 80
 
 
 class HumanAgent(Agent):
-    def __init__(self, name="Randy"):
-        super().__init__(name=name)
+    def __init__(self, name: str, player_index: int):
+        super().__init__(name=name, player_index=player_index)
 
     def play(self, game_state: GameState):
 
@@ -580,17 +603,13 @@ class Node:
 
 
 class OracleAgent(Agent):
-    def __init__(self, name="Oracle", iterations=1000, verbose=False):
-        super().__init__(name=name)
+    def __init__(self, name: str, player_index: int, iterations=1000, verbose=False):
+        super().__init__(name=name, player_index=player_index)
         self.iterations = iterations
         self.verbose = verbose
-        self.player_index = None
         self.predicted_scores = []
 
     def play(self, game_state: GameState):
-
-        # for the score index
-        self.player_index = game_state.get_current_player()
 
         legal_actions = game_state.get_legal_actions()
 
@@ -732,12 +751,14 @@ class OracleAgent(Agent):
             return None, None
 
 
-class DuckAgent(OracleAgent):
+class DuckAgent(Agent):
     def __init__(self, name, player_index, thinking_time=3, iterations=100_000, verbose=False):
-        super().__init__(name=name, iterations=iterations, verbose=verbose)
+        super().__init__(name=name, player_index=player_index)
         self.best_bids = []
         self.player_index = player_index
         self.thinking_time = thinking_time
+        self.verbose = verbose
+        self.iterations = iterations
 
     def play(self, root_state: GameState):
 
@@ -796,8 +817,12 @@ class DuckAgent(OracleAgent):
     def estimate_score(self, root_state: GameState):
 
         root_node = Node(None, parent=None)
+        starting_time = time.perf_counter()
 
         for _ in range(self.iterations):
+
+            if time.perf_counter() - starting_time > self.thinking_time:
+                break
 
             node = root_node
             scores_for_one_trump = []
@@ -836,13 +861,13 @@ class DuckAgent(OracleAgent):
 
         best_move_node = max(root_node.children, key=lambda x: x.visits)
 
-        if self.verbose:
-            print(f"{self.name}: {_ + 1:_} iterations")
-            for child in sorted(root_node.children, key=lambda x: x.visits, reverse=True):
-                print("\t", get_card_name(child.move), child)
-            # print(f"children of {get_card_name(best_move_node.move)}")
-            # for child in best_move_node.children:
-            #     print("\t", get_card_name(child.move), child)
+        # if self.verbose:
+        #     print(f"{self.name}: {_ + 1:_} iterations")
+        #     for child in sorted(root_node.children, key=lambda x: x.visits, reverse=True)[:3]:
+        #         print("\t", get_card_name(child.move), child)
+        #     # print(f"children of {get_card_name(best_move_node.move)}")
+        #     # for child in best_move_node.children:
+        #     #     print("\t", get_card_name(child.move), child)
 
         return round(best_move_node.value / best_move_node.visits)
 
@@ -862,55 +887,71 @@ class DuckAgent(OracleAgent):
 
     def bid(self, hand, current_lead, bids):
 
-        if not self.best_bids:
-            # self.player_index = (current_lead + len(bids)) % 4
+        best_bid_yet = max((bid[1] for bid in bids if bid[1] is not None), default=70)
 
-            scores_for_each_trumps = []
+        partner_bids = [0] * 4
+        opponent_bids = [0] * 4
+        for bid in bids:
+            p, v, t = bid
+            if v is not None and p != self.player_index:
+                if p % 2 == self.player_index % 2:  # partner
+                    partner_bids[t] = max(v, partner_bids[t])
+                else:
+                    opponent_bids[t] = max(v, opponent_bids[t])
 
-            unseen_cards = [c for c in range(32) if c not in hand]
-            random.shuffle(unseen_cards)
-            hands = [unseen_cards[i : i + 8] for i in (0, 8, 16)]
-            hands.insert(player_idx, hand)
+        unseen_cards = [c for c in range(32) if c not in hand]
+        random.shuffle(unseen_cards)
+        hands = [unseen_cards[i : i + 8] for i in (0, 8, 16)]
+        hands.insert(self.player_index, hand)
 
-            for potential_trump in range(4):
-                if self.verbose:
-                    print(self.name, f"thinking about announcing {SUITS[potential_trump]}")
-                game_state = GameState(
-                    names=["N", "E", "S", "W"],
-                    bids=[],
-                    bet_value=0,
-                    betting_team=self.player_index % 2,
-                    trump=potential_trump,
-                    coinche=1,
-                    hands=[h.copy() for h in hands],
-                    tricks=[],
-                    leads=[],
-                    current_trick=[],
-                    current_lead=current_lead,
-                    last_card_played=None,
-                    scores=[0, 0],
-                    info=get_empty_info_dict(),
-                )
-                # scores_for_each_trumps.append(self.estimate_score(game_state.copy()))
-                self.best_bids.append(self.estimate_score(game_state.copy()))
+        not_worth_investigating = [False] * 4
+        if self.best_bids:
+            for trump, score in enumerate(self.best_bids):
+                if score == 0:
+                    not_worth_investigating[trump] = True
 
-            # self.update_best_bids(scores_for_each_trumps)
+        self.best_bids = []  # reset
+        for potential_trump in range(4):
+
+            if not_worth_investigating[potential_trump]:
+                self.best_bids.append(0)
+                continue
+
+            target_score = best_bid_yet + 10
+            compensation = round(partner_bids[potential_trump] * 0.6 - opponent_bids[potential_trump] * 0.6)
 
             if self.verbose:
-                print(
-                    f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.best_bids)]}"
-                )
+                print(f"{self.name} considering {SUITS[potential_trump]}\ttarget: {target_score} bonus: {compensation}")
+
+            game_state = GameState(
+                names=["N", "E", "S", "W"],
+                bids=[],
+                bet_value=target_score,
+                betting_team=self.player_index % 2,
+                trump=potential_trump,
+                coinche=1,
+                hands=[h.copy() for h in hands],
+                tricks=[],
+                leads=[],
+                current_trick=[],
+                current_lead=current_lead,
+                last_card_played=None,
+                scores=[0, 0],
+                info=get_empty_info_dict(),
+            )
+            # the average score, trying to
+            avg_score = max(0, self.estimate_score(game_state.copy()) - target_score + compensation)
+            self.best_bids.append(avg_score)
+
+        if self.verbose:
+            print(f"{self.name}: best I can do is {[f'{score}{SUITS[t]}' for t, score in enumerate(self.best_bids)]}")
+
+        last_bid_value = max((bid[1] for bid in bids if bid[1] is not None), default=60)
 
         best_bid = max(enumerate(self.best_bids), key=lambda x: x[1])
-        best_bid = (best_bid[0], best_bid[1] // 10 * 10)
+        best_bid = (best_bid[0], min(last_bid_value + 20, best_bid[1] // 10 * 10))
 
-        last_bid_value = 70
-        for bid in bids[::-1]:
-            if bid[1] is not None:
-                last_bid_value = bid[1]
-                break
-
-        if best_bid[1] > last_bid_value:
+        if best_bid[1] >= 80 and best_bid[1] > last_bid_value:
             return best_bid
         else:
             # TODO: implementer une défense selon best bid
@@ -933,6 +974,7 @@ def bidding_phase(players, current_lead, hands, verbose):
         assert (
             not value or value > best_bid
         ), f"{players[player].name} tried to bid {value} while best bid is {best_bid}"
+
         best_bid = value or best_bid
 
         bids.append([player, value, trump])
@@ -944,7 +986,7 @@ def bidding_phase(players, current_lead, hands, verbose):
                 print(f"{players[player].name} passes")
 
     if verbose:
-        print(f"Contract is {best_bid} {SUITS[trump]}")
+        print(f"{players[bids[-4][0]].name} is playing for {bids[-4][1]}{SUITS[bids[-4][2]]}")
 
     return bids[:-3]
 
@@ -955,32 +997,33 @@ def main():
     # 23 - 90 coeur - team 1
 
     n_iter = 100_000
+    thinking_time = 5
     big_scores = [0, 0]
 
-    for i in range(1):
+    for i in range(10):
 
         players = [
-            DuckAgent(name="Jean", iterations=n_iter, verbose=True),
-            # RandomAgent(name="Ivan"),
-            DuckAgent(name="Ivan", iterations=n_iter, verbose=True),
-            DuckAgent(name="Jule", iterations=n_iter, verbose=True),
-            DuckAgent(name="Eloi", iterations=n_iter, verbose=True),
-            # RandomAgent(name="Eloi"),
+            DuckAgent(name="Jean", player_index=0, iterations=n_iter, thinking_time=thinking_time, verbose=False),
+            RandomAgent(name="Ivan", player_index=1),
+            # DuckAgent(name="Ivan", player_index=1, iterations=n_iter, thinking_time=thinking_time, verbose=True),
+            DuckAgent(name="Jule", player_index=2, iterations=n_iter, thinking_time=thinking_time, verbose=False),
+            # DuckAgent(name="Eloi", player_index=3, iterations=n_iter, thinking_time=thinking_time, verbose=True),
+            RandomAgent(name="Eloi", player_index=3),
         ]
 
         # print(i)
         game_state = GameState.fresh_game(
             names=[p.name for p in players],
+            players=players,
             # hands=[[*range(i, i + 8)] for i in [0, 8, 16, 24]],
-            # seed=i,
+            # seed=654354587,
             verbose=True,
         )
 
-        play_one_game(players, game_state, verbose=True)
+        play_one_game(players, game_state, verbose=False)
 
         big_scores[0] += game_state.scores[0]
         big_scores[1] += game_state.scores[1]
-
         print(game_state.scores)
 
     print(big_scores)
