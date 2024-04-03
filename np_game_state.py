@@ -9,6 +9,10 @@ import time
 from functools import lru_cache
 from itertools import chain
 
+import numba as nb
+import numpy as np
+from numba import float32, int32
+from numba.experimental import jitclass
 from tqdm import trange
 
 # BELOTE_REBELOTE = {0: (5, 6), 1: (13, 14), 2: (21, 22), 3: (29, 30)}
@@ -991,45 +995,72 @@ def bidding_phase(players, current_lead, hands, verbose):
     return bids[:-3]
 
 
+spec = [
+    ("names", nb.),
+]
+
+
+@jitclass(spec)
+class OptiGameState(object):
+    def __init__(self, names, bids):
+        self.value = value
+        self.array = np.zeros(value, dtype=np.float32)
+
+    @property
+    def size(self):
+        return self.array.size
+
+    def increment(self, val):
+        for i in range(self.size):
+            self.array[i] += val
+        return self.array
+
+    @staticmethod
+    def add(x, y):
+        return x + y
+
+
 def main():
 
-    # 46 - 110 carreau - team 2
-    # 23 - 90 coeur - team 1
+    n = 21
+    mybag = Bag(n)
 
-    n_iter = 100_000
-    thinking_time = 5
-    big_scores = [0, 0]
+    print(mybag.size)
 
-    for i in range(1):
-        print("-" * 30)
-        print(f"Game {i}")
-        print("-" * 30)
+    # # 46 - 110 carreau - team 2
+    # # 23 - 90 coeur - team 1
 
-        players = [
-            DuckAgent(name="Jeans", player_index=0, iterations=n_iter, thinking_time=thinking_time, verbose=False),
-            RandomAgent(name="Ivans", player_index=1),
-            # DuckAgent(name="Ivan", player_index=1, iterations=n_iter, thinking_time=thinking_time, verbose=True),
-            DuckAgent(name="Jules", player_index=2, iterations=n_iter, thinking_time=thinking_time, verbose=False),
-            # DuckAgent(name="Eloi", player_index=3, iterations=n_iter, thinking_time=thinking_time, verbose=True),
-            RandomAgent(name="Elois", player_index=3),
-        ]
+    # n_iter = 100_000
+    # thinking_time = 5
+    # big_scores = [0, 0]
 
-        # print(i)
-        game_state = GameState.fresh_game(
-            names=[p.name for p in players],
-            players=players,
-            # hands=[[*range(i, i + 8)] for i in [0, 8, 16, 24]],
-            seed=i,
-            verbose=True,
-        )
+    # for i in range(10):
 
-        play_one_game(players, game_state, verbose=False)
+    #     players = [
+    #         DuckAgent(name="Jean", player_index=0, iterations=n_iter, thinking_time=thinking_time, verbose=False),
+    #         RandomAgent(name="Ivan", player_index=1),
+    #         # DuckAgent(name="Ivan", player_index=1, iterations=n_iter, thinking_time=thinking_time, verbose=True),
+    #         DuckAgent(name="Jule", player_index=2, iterations=n_iter, thinking_time=thinking_time, verbose=False),
+    #         # DuckAgent(name="Eloi", player_index=3, iterations=n_iter, thinking_time=thinking_time, verbose=True),
+    #         RandomAgent(name="Eloi", player_index=3),
+    #     ]
 
-        big_scores[0] += game_state.scores[0]
-        big_scores[1] += game_state.scores[1]
-        print(game_state.scores)
+    #     # print(i)
+    #     game_state = GameState.fresh_game(
+    #         names=[p.name for p in players],
+    #         players=players,
+    #         # hands=[[*range(i, i + 8)] for i in [0, 8, 16, 24]],
+    #         # seed=654354587,
+    #         verbose=True,
+    #     )
 
-    print(big_scores)
+    #     play_one_game(players, game_state, verbose=False)
+
+    #     big_scores[0] += game_state.scores[0]
+    #     big_scores[1] += game_state.scores[1]
+    #     print(game_state.scores)
+
+    # print(big_scores)
 
 
 if __name__ == "__main__":

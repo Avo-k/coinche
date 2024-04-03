@@ -8,6 +8,8 @@ from PIL import Image
 from game_state import Agent, DuckAgent, GameState, play_one_card, get_empty_info_dict, sort_cards
 
 
+random.seed(23)
+
 # Initialize Pygame
 pygame.init()
 
@@ -22,8 +24,7 @@ pygame.display.set_caption("Belote")
 
 class HumanGuiAgent(Agent):
     def __init__(self, name, player_index):
-        super().__init__(name)
-        self.player_index = player_index
+        super().__init__(name, player_index)
 
     def play(self, game_state):
         pass
@@ -163,8 +164,8 @@ thinking_time = 5
 players = [
     DuckAgent(name="North", player_index=0, thinking_time=thinking_time, iterations=n_iter, verbose=True),
     DuckAgent(name="East", player_index=1, thinking_time=thinking_time, iterations=n_iter, verbose=True),
-    DuckAgent(name="South", player_index=2, thinking_time=thinking_time, iterations=n_iter, verbose=True),
-    # HumanGuiAgent(name="South", player_index=2),
+    # DuckAgent(name="South", player_index=2, thinking_time=thinking_time, iterations=n_iter, verbose=True),
+    HumanGuiAgent(name="South", player_index=2),
     DuckAgent(name="West", player_index=3, thinking_time=thinking_time, iterations=n_iter, verbose=True),
 ]
 
